@@ -1,0 +1,378 @@
+Human Instructions for Building a Real-Life Neuron Network Model
+
+Important Note
+
+This is a physical interactive model of a neuron network, not a living biological neuron network. Do not attempt to grow, culture, electrically stimulate, or connect real biological neurons outside a properly supervised laboratory. Real neural tissue work requires sterile technique, biosafety oversight, incubators, specialized equipment, trained personnel, and approved protocols.
+
+Goal
+
+Build a hands-on neuron network model that shows how signals move through a circuit:
+
+input neurons -> processing neurons -> inhibitory control -> output neuron
+
+The model demonstrates:
+
+- Dendrites receiving signals
+- Soma/cell body integrating signals
+- Threshold firing
+- Axons carrying signals
+- Synapses transferring signals
+- Excitatory signals increasing activity
+- Inhibitory signals reducing activity
+- Refractory period after firing
+- Learning through strengthened pathways
+- Dream/replay mode through internal signal replay
+
+
+Materials
+
+Basic Materials
+
+- Large poster board, cardboard, foam board, or tabletop surface
+- Colored string, yarn, pipe cleaners, or craft wire
+- Bottle caps, small cups, cardboard circles, or LEGO pieces
+- Small beads, buttons, tokens, marbles, or paper circles
+- Tape, glue, or removable putty
+- Markers
+- Index cards or paper labels
+- Scissors
+- Ruler
+
+Optional Electrical Materials
+
+Use only low-voltage educational circuits if adding lights.
+
+- LEDs
+- Coin-cell batteries or AA battery pack
+- Resistors appropriate for LEDs
+- Copper tape or insulated wire
+- Small switches
+- Alligator clips
+
+Do not connect the model to wall power.
+
+
+Color Code
+
+Use consistent colors so the model is easy to understand.
+
+- Orange or yellow: excitatory neuron or excitatory signal
+- Blue: inhibitory neuron or inhibitory signal
+- Green: sensory input
+- Purple: memory or dream/replay signal
+- Red: firing threshold
+- Gray: resting or refractory state
+- White or tan: myelin/insulation
+- Black or dark gray: inactive connection
+
+
+Network Plan
+
+Build a 7-node model:
+
+- E0: excitatory input neuron
+- E1: excitatory input neuron
+- E2: excitatory processing neuron
+- E3: excitatory output-path neuron
+- I4: inhibitory control neuron
+- I5: inhibitory control neuron
+- OUT: output neuron
+
+Suggested layout:
+
+E0          E2          I5
+
+E1          I4          E3          OUT
+
+The left side is input.
+The middle is processing.
+The right side is output.
+
+
+Step 1: Prepare the Base
+
+1. Place the poster board, cardboard, or base surface on a table.
+2. Draw three labeled regions:
+   - Input region
+   - Processing region
+   - Output region
+3. Leave enough space between neurons for connection lines.
+4. Write the title at the top: "Real-Life Neuron Network Model."
+
+
+Step 2: Build the Soma of Each Neuron
+
+The soma is the main cell body.
+
+1. Use a bottle cap, small cup, circular cardboard piece, or LEGO circle for each soma.
+2. Place E0 and E1 on the left side.
+3. Place E2, I4, E3, and I5 in the middle.
+4. Place OUT on the right side.
+5. Label each soma clearly.
+
+Suggested colors:
+
+- E0, E1, E2, E3, OUT: orange/yellow
+- I4, I5: blue
+
+
+Step 3: Add Dendrites
+
+Dendrites receive incoming signals.
+
+1. Cut short pieces of yarn, pipe cleaner, or craft wire.
+2. Attach 3 to 5 short branches around each soma.
+3. Point some dendrites toward incoming connections.
+4. Label one set of branches "dendrites."
+
+Dendrites should be shorter than axons.
+
+
+Step 4: Add Axons
+
+Axons send signals away from the neuron.
+
+1. Use a longer piece of string, yarn, pipe cleaner, or wire for each axon.
+2. Attach one axon to each neuron except OUT.
+3. Point each axon toward another neuron.
+4. Label one long branch "axon."
+
+Axons should be visibly longer than dendrites.
+
+
+Step 5: Add Synapses
+
+A synapse is the gap where one neuron communicates with the next.
+
+1. At the end of each axon, place a bead, button, small paper circle, or LEGO stud.
+2. Leave a small gap between the axon ending and the receiving dendrite.
+3. Label the gap "synapse."
+4. Make the synapse visible by circling it or adding a small label.
+
+The gap represents the synaptic cleft.
+
+
+Step 6: Connect the Network
+
+Create these pathways using string, yarn, pipe cleaners, or drawn arrows:
+
+1. E0 -> E2
+2. E1 -> E2
+3. E1 -> I4
+4. E2 -> E3
+5. E2 -> I5
+6. I4 -> E3
+7. I5 -> OUT
+8. E3 -> OUT
+
+Use orange/yellow for excitatory pathways.
+
+Use blue for inhibitory pathways.
+
+
+Step 7: Add Signal Tokens
+
+Create small movable signal tokens.
+
+Suggested tokens:
+
+- Orange/yellow bead or paper circle: excitatory spike
+- Blue bead or paper circle: inhibitory spike
+- Purple bead or paper circle: dream/replay signal
+- Gray bead or paper circle: refractory period
+- Green bead or paper circle: sensory input
+
+Place the tokens in a small container labeled "signals."
+
+
+Step 8: Add Threshold Counters
+
+Each neuron needs a small activation counter.
+
+1. Draw a small box beside each soma.
+2. Label it "activation."
+3. Place up to 3 small tokens in the box during play.
+
+Use this rule:
+
+- 0 activation tokens = resting
+- 1 activation token = weak activation
+- 2 activation tokens = near threshold
+- 3 activation tokens = neuron fires
+
+When a neuron reaches 3 activation tokens, it sends a signal down its axon.
+
+
+Step 9: Add the Refractory Rule
+
+After a neuron fires, it briefly cannot fire again.
+
+1. Place a gray token on a neuron after it fires.
+2. A neuron with a gray token cannot fire that turn.
+3. Remove the gray token on the next turn.
+
+Label this rule "refractory period."
+
+
+Step 10: Add Excitatory and Inhibitory Rules
+
+Excitatory Rule
+
+When an orange/yellow signal reaches a neuron:
+
+1. Add 1 activation token to that neuron.
+2. If the neuron reaches 3 activation tokens, it fires.
+3. Send a new orange/yellow signal token down its axon.
+
+Inhibitory Rule
+
+When a blue signal reaches a neuron:
+
+1. Remove 1 activation token from that neuron.
+2. If the neuron has no activation tokens, place a blue blocker beside it.
+3. The blocker prevents firing for one turn.
+
+This shows how inhibitory neurons suppress network activity.
+
+
+Step 11: Add Synaptic Delay
+
+Signals do not cross every connection instantly.
+
+Rule:
+
+1. Move a signal to a synapse.
+2. Pause it there for one turn.
+3. On the next turn, move it into the receiving dendrite.
+
+This represents synaptic delay.
+
+
+Step 12: Run the Basic Network Simulation
+
+Round 1: Sensory Input
+
+1. Place green sensory input tokens near E0 and E1.
+2. Convert them into orange/yellow excitatory signals.
+3. Move the signals toward E2.
+4. When they reach E2, add activation tokens to E2.
+5. If E2 reaches 3 activation tokens, E2 fires.
+
+Round 2: Processing
+
+1. Move E2's signal toward E3.
+2. Move another E2 signal toward I5.
+3. Add activation to E3 and I5.
+4. If either reaches threshold, let it fire.
+
+Round 3: Inhibition
+
+1. If I5 fires, move a blue inhibitory signal toward OUT.
+2. When it reaches OUT, remove one activation token from OUT.
+3. This shows inhibitory control over output.
+
+Round 4: Output
+
+1. If E3 fires, move an orange/yellow signal toward OUT.
+2. Add activation to OUT.
+3. If OUT reaches 3 activation tokens, it fires.
+4. Place a bright marker on OUT to show network output.
+
+
+Step 13: Add Learning
+
+Learning means repeated pathways become stronger.
+
+Rule:
+
+1. Track which connections are used.
+2. If a connection is used 3 times, strengthen it.
+3. Strengthen by adding an extra string, extra bead, or thicker line.
+4. A strengthened excitatory connection adds 2 activation tokens instead of 1.
+5. A strengthened inhibitory connection removes 2 activation tokens instead of 1.
+
+Example:
+
+If E2 -> E3 is used repeatedly, make it thicker. Later, E2 can activate E3 faster.
+
+
+Step 14: Add Dream or Replay Mode
+
+Dream/replay mode means the network reactivates old patterns without new sensory input.
+
+Instructions:
+
+1. Remove the green sensory input tokens.
+2. Place purple replay tokens on strengthened pathways.
+3. Move purple tokens through the network.
+4. Let previously active neurons light up or receive activation.
+5. Allow purple tokens to recombine across learned pathways.
+
+Example replay path:
+
+E0 -> E2 -> E3 -> OUT
+
+Example mixed replay path:
+
+E1 -> E2 -> I5 -> OUT
+
+This shows how a network can replay stored activity patterns.
+
+
+Step 15: Add Optional LED Interaction
+
+Use only safe, low-voltage battery circuits.
+
+Simple LED version:
+
+1. Place one LED beside each soma.
+2. Use a small switch or manual contact to turn the LED on when the neuron fires.
+3. Use orange/yellow LEDs for excitatory neurons.
+4. Use blue LEDs for inhibitory neurons.
+5. Do not use wall power.
+6. Do not short-circuit batteries.
+7. Use appropriate resistors for LEDs.
+
+Simpler non-electrical option:
+
+Use transparent colored pieces or shiny stickers as "glow" markers instead of LEDs.
+
+
+Step 16: Add Labels
+
+Add these labels to the model:
+
+- Soma / cell body
+- Dendrite
+- Axon
+- Synapse
+- Excitatory signal
+- Inhibitory signal
+- Threshold
+- Refractory period
+- Learning
+- Dream/replay mode
+- Output neuron
+
+
+Step 17: Demonstration Script
+
+Use this short explanation while showing the model:
+
+"This model shows a small neuron network. Signals enter through E0 and E1. Dendrites receive the signals, the soma counts activation, and the neuron fires when it reaches threshold. Excitatory neurons increase activity. Inhibitory neurons reduce activity. Signals cross synapses with a short delay. After firing, a neuron enters a refractory period. Repeated pathways can strengthen, which represents learning. In dream or replay mode, old signal paths activate again without new sensory input."
+
+
+Step 18: Safety Notes
+
+- This is a model, not living neural tissue.
+- Do not attempt biological neuron experiments without a proper lab.
+- Do not use wall electricity.
+- Keep small pieces away from young children and pets.
+- Use scissors carefully.
+- If using LEDs, use low-voltage batteries only.
+- Keep liquids away from electrical parts.
+
+
+Final Result
+
+The finished model is a physical, interactive neuron network. It shows how signals enter a circuit, build up in neuron bodies, cross synapses, trigger firing, activate or suppress other neurons, produce an output, strengthen through repeated use, and replay stored patterns in a dream-like mode.
