@@ -1,0 +1,87 @@
+Human Instructions for Creating Water Safely
+
+The safest way to “create” water is not by chemically combining hydrogen and oxygen, because that can be explosive. Use a physical method such as condensation, melting ice, or distillation.
+
+Method 1: Create Water by Condensation
+
+Materials
+
+- Metal cup or glass cup
+- Ice cubes
+- Warm room or warm outdoor air
+- Small plate or tray
+- Paper towel
+
+Steps
+
+1. Place the cup on a small plate or tray.
+2. Fill the cup with ice cubes.
+3. Wait several minutes.
+4. Water droplets will form on the outside of the cup.
+5. Let the droplets run down onto the plate.
+6. Collect the droplets with a clean spoon or observe them as formed water.
+
+What Is Happening
+
+Water vapor in the air touches the cold cup. The vapor loses heat and changes from gas into liquid droplets. This is condensation.
+
+water vapor in air -> cooled surface -> liquid water droplets
+
+
+Method 2: Create Liquid Water by Melting Ice
+
+Materials
+
+- Ice cubes
+- Cup or bowl
+- Room-temperature space
+
+Steps
+
+1. Place ice cubes in a clean cup or bowl.
+2. Leave them at room temperature.
+3. Wait as heat from the room transfers into the ice.
+4. The ice melts into liquid water.
+
+What Is Happening
+
+Ice is solid water. Adding heat changes it into liquid water.
+
+solid water + heat -> liquid water
+
+
+Method 3: Create Cleaner Water by Distillation
+
+Materials
+
+- Pot
+- Water
+- Heat source
+- Metal lid
+- Clean collection cup
+- Ice, optional
+
+Steps
+
+1. Put water in a pot.
+2. Heat the pot until steam forms.
+3. Place a cool metal lid above the steam at an angle.
+4. Let steam condense on the underside of the lid.
+5. Let the droplets run into a clean collection cup.
+6. Turn off the heat when finished.
+7. Let all equipment cool before touching it.
+
+What Is Happening
+
+Heating water turns it into steam. Cooling the steam turns it back into liquid water. Some dissolved solids stay behind in the original pot.
+
+liquid water -> steam -> cooled surface -> condensed liquid water
+
+
+Important Safety Notes
+
+- Do not try to make water by igniting hydrogen and oxygen.
+- Do not use pressurized gases.
+- Do not use flames, chemicals, or sealed containers for water creation experiments.
+- Do not drink collected condensation or distilled water unless the equipment and source are food-safe and clean.
+- Use adult supervision for any method involving heat.
