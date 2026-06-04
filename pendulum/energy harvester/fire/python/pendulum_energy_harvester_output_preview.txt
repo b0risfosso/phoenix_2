@@ -1,0 +1,339 @@
+Terminal Pendulum Energy Harvester Simulation with AI-Controlled Rounds
+No graphics. No external packages. State is printed directly to the terminal.
+Physical rule: harvested electricity is removed from pendulum motion; no infinite energy is created.
+
+========================================================================================================================
+ROUND 1: PENDULUM ENERGY HARVESTER
+parameters: g=9.810 m/s^2, length=1.250 m, mass=1.000 kg, damping=0.0250, initial_angle=45.00 deg, initial_omega=0.000 rad/s
+harvester: generator_load=0.0450, efficiency=0.62, engagement=±20.0 deg, cut_in_speed=0.20 m/s, storage=0.00/8.00 J
+------------------------------------------------------------------------------------------------------------------------
+R01 t=00.00s  angle=  45.000 deg  omega=   0.000 rad/s  speed=  0.000 m/s  mechE=  3.5916 J  P_elec= 0.0000 W  store= 0.000 J [............] Vcap= 0.00 V  GEN=off                    ==|==          O       
+R01 t=00.40s  angle=  21.607 deg  omega=  -1.862 rad/s  speed=  2.328 m/s  mechE=  3.5706 J  P_elec= 0.0000 W  store= 0.000 J [............] Vcap= 0.00 V  GEN=off                    ==|==   O              
+R01 t=00.80s  angle= -24.287 deg  omega=  -1.724 rad/s  speed=  2.156 m/s  mechE=  3.4086 J  P_elec= 0.0000 W  store= 0.039 J [............] Vcap= 0.28 V  GEN=off              O     ==|==                  
+R01 t=01.20s  angle= -43.479 deg  omega=   0.190 rad/s  speed=  0.237 m/s  mechE=  3.3927 J  P_elec= 0.0000 W  store= 0.039 J [............] Vcap= 0.28 V  GEN=off        O           ==|==                  
+R01 t=01.60s  angle= -17.122 deg  omega=   1.899 rad/s  speed=  2.374 m/s  mechE=  3.3623 J  P_elec= 0.1007 W  store= 0.043 J [............] Vcap= 0.29 V  GEN=ON                 G   ==|==                  
+R01 t=02.00s  angle=  26.972 deg  omega=   1.552 rad/s  speed=  1.940 m/s  mechE=  3.2147 J  P_elec= 0.0000 W  store= 0.078 J [............] Vcap= 0.40 V  GEN=off                    ==|==     O            
+R01 t=02.40s  angle=  41.573 deg  omega=  -0.383 rad/s  speed=  0.479 m/s  mechE=  3.2033 J  P_elec= 0.0000 W  store= 0.078 J [............] Vcap= 0.40 V  GEN=off                    ==|==         O        
+R01 t=02.80s  angle=  12.434 deg  omega=  -1.916 rad/s  speed=  2.395 m/s  mechE=  3.1565 J  P_elec= 0.1025 W  store= 0.086 J [............] Vcap= 0.41 V  GEN=ON                     ==|== G                
+R01 t=03.20s  angle= -29.388 deg  omega=  -1.362 rad/s  speed=  1.702 m/s  mechE=  3.0267 J  P_elec= 0.0000 W  store= 0.115 J [............] Vcap= 0.48 V  GEN=off            O       ==|==                  
+R01 t=03.60s  angle= -39.207 deg  omega=   0.575 rad/s  speed=  0.718 m/s  mechE=  3.0187 J  P_elec= 0.0000 W  store= 0.115 J [............] Vcap= 0.48 V  GEN=off         O          ==|==                  
+R01 t=04.00s  angle=  -7.590 deg  omega=   1.911 rad/s  speed=  2.388 m/s  mechE=  2.9591 J  P_elec= 0.1018 W  store= 0.126 J [............] Vcap= 0.50 V  GEN=ON                    G==|==                  
+R01 t=04.40s  angle=  31.474 deg  omega=   1.157 rad/s  speed=  1.446 m/s  mechE=  2.8502 J  P_elec= 0.0000 W  store= 0.150 J [............] Vcap= 0.55 V  GEN=off                    ==|==      O           
+R01 t=04.80s  angle=  36.391 deg  omega=  -0.762 rad/s  speed=  0.952 m/s  mechE=  2.8445 J  P_elec= 0.0000 W  store= 0.150 J [............] Vcap= 0.55 V  GEN=off                    ==|==        O         
+R01 t=05.20s  angle=   2.686 deg  omega=  -1.879 rad/s  speed=  2.349 m/s  mechE=  2.7718 J  P_elec= 0.0985 W  store= 0.166 J [............] Vcap= 0.58 V  GEN=ON                     ==G==                  
+R01 t=05.60s  angle= -33.126 deg  omega=  -0.939 rad/s  speed=  1.174 m/s  mechE=  2.6822 J  P_elec= 0.0000 W  store= 0.185 J [............] Vcap= 0.61 V  GEN=off           O        ==|==                  
+R01 t=06.00s  angle= -33.093 deg  omega=   0.939 rad/s  speed=  1.173 m/s  mechE=  2.6775 J  P_elec= 0.0000 W  store= 0.185 J [............] Vcap= 0.61 V  GEN=off           O        ==|==                  
+R01 t=06.40s  angle=   2.185 deg  omega=   1.818 rad/s  speed=  2.273 m/s  mechE=  2.5912 J  P_elec= 0.0922 W  store= 0.206 J [............] Vcap= 0.64 V  GEN=ON                     ==G==                  
+R01 t=06.80s  angle=  34.251 deg  omega=   0.711 rad/s  speed=  0.889 m/s  mechE=  2.5214 J  P_elec= 0.0000 W  store= 0.220 J [............] Vcap= 0.66 V  GEN=off                    ==|==       O          
+R01 t=07.20s  angle=  29.322 deg  omega=  -1.100 rad/s  speed=  1.375 m/s  mechE=  2.5163 J  P_elec= 0.0000 W  store= 0.220 J [............] Vcap= 0.66 V  GEN=off                    ==|==      O           
+R01 t=07.60s  angle=  -6.918 deg  omega=  -1.727 rad/s  speed=  2.159 m/s  mechE=  2.4202 J  P_elec= 0.0832 W  store= 0.243 J [............] Vcap= 0.70 V  GEN=ON                    G==|==                  
+R01 t=08.00s  angle= -34.791 deg  omega=  -0.476 rad/s  speed=  0.594 m/s  mechE=  2.3688 J  P_elec= 0.0000 W  store= 0.253 J [............] Vcap= 0.71 V  GEN=off           O        ==|==                  
+R01 t=08.40s  angle= -25.117 deg  omega=   1.241 rad/s  speed=  1.551 m/s  mechE=  2.3621 J  P_elec= 0.0000 W  store= 0.253 J [............] Vcap= 0.71 V  GEN=off             O      ==|==                  
+R01 t=08.80s  angle=  11.398 deg  omega=   1.607 rad/s  speed=  2.008 m/s  mechE=  2.2582 J  P_elec= 0.0720 W  store= 0.279 J [............] Vcap= 0.75 V  GEN=ON                     ==|==G                 
+R01 t=09.20s  angle=  34.692 deg  omega=   0.238 rad/s  speed=  0.297 m/s  mechE=  2.2240 J  P_elec= 0.0000 W  store= 0.284 J [............] Vcap= 0.75 V  GEN=off                    ==|==       O          
+R01 t=09.60s  angle=  20.541 deg  omega=  -1.355 rad/s  speed=  1.694 m/s  mechE=  2.2146 J  P_elec= 0.0000 W  store= 0.284 J [............] Vcap= 0.75 V  GEN=off                    ==|==   O              
+R01 t=10.00s  angle= -15.511 deg  omega=  -1.458 rad/s  speed=  1.822 m/s  mechE=  2.1065 J  P_elec= 0.0593 W  store= 0.311 J [............] Vcap= 0.79 V  GEN=ON                 G   ==|==                  
+R01 t=10.40s  angle= -33.912 deg  omega=  -0.001 rad/s  speed=  0.001 m/s  mechE=  2.0859 J  P_elec= 0.0000 W  store= 0.314 J [............] Vcap= 0.79 V  GEN=off           O        ==|==                  
+R01 t=10.80s  angle= -15.672 deg  omega=   1.435 rad/s  speed=  1.794 m/s  mechE=  2.0656 J  P_elec= 0.0575 W  store= 0.317 J [............] Vcap= 0.80 V  GEN=ON                 G   ==|==                  
+R01 t=11.20s  angle=  19.152 deg  omega=   1.283 rad/s  speed=  1.603 m/s  mechE=  1.9643 J  P_elec= 0.0459 W  store= 0.343 J [#...........] Vcap= 0.83 V  GEN=ON                     ==|==   G              
+R01 t=11.60s  angle=  32.435 deg  omega=  -0.230 rad/s  speed=  0.287 m/s  mechE=  1.9541 J  P_elec= 0.0000 W  store= 0.343 J [#...........] Vcap= 0.83 V  GEN=off                    ==|==       O          
+R01 t=12.00s  angle=  10.622 deg  omega=  -1.480 rad/s  speed=  1.850 m/s  mechE=  1.9222 J  P_elec= 0.0611 W  store= 0.349 J [#...........] Vcap= 0.84 V  GEN=ON                     ==|==G                 
+------------------------------------------------------------------------------------------------------------------------
+summary: max_angle=45.00 deg, max_speed=2.643 m/s, mech_energy_range=1.9222..3.5916 J, harvested=0.3491 J, stored_final=0.3491 J, avg_power=0.02909 W, peak_power=0.12473 W, heat_loss=0.2139 J, generator_on=4.10 s, storage=not full, period=2.307 s, note=stable harvesting swing
+AI controller selected next harvester goal: wide swing high energy
+
+========================================================================================================================
+ROUND 2: PENDULUM ENERGY HARVESTER
+parameters: g=9.486 m/s^2, length=1.521 m, mass=1.000 kg, damping=0.0180, initial_angle=62.17 deg, initial_omega=0.022 rad/s
+harvester: generator_load=0.0515, efficiency=0.62, engagement=±18.8 deg, cut_in_speed=0.27 m/s, storage=0.00/8.00 J
+------------------------------------------------------------------------------------------------------------------------
+R02 t=00.00s  angle=  62.173 deg  omega=   0.022 rad/s  speed=  0.033 m/s  mechE=  7.6918 J  P_elec= 0.0000 W  store= 0.000 J [............] Vcap= 0.00 V  GEN=off                    ==|==             O    
+R02 t=00.40s  angle=  38.506 deg  omega=  -1.980 rad/s  speed=  3.011 m/s  mechE=  7.6683 J  P_elec= 0.0000 W  store= 0.000 J [............] Vcap= 0.00 V  GEN=off                    ==|==        O         
+R02 t=00.80s  angle= -16.556 deg  omega=  -2.424 rad/s  speed=  3.685 m/s  mechE=  7.3893 J  P_elec= 0.1874 W  store= 0.052 J [............] Vcap= 0.32 V  GEN=ON                 G   ==|==                  
+R02 t=01.20s  angle= -56.625 deg  omega=  -0.849 rad/s  speed=  1.291 m/s  mechE=  7.3232 J  P_elec= 0.0000 W  store= 0.052 J [............] Vcap= 0.32 V  GEN=off      O             ==|==                  
+R02 t=01.60s  angle= -51.568 deg  omega=   1.268 rad/s  speed=  1.927 m/s  mechE=  7.3160 J  P_elec= 0.0000 W  store= 0.052 J [............] Vcap= 0.32 V  GEN=off       O            ==|==                  
+R02 t=02.00s  angle=  -5.142 deg  omega=   2.481 rad/s  speed=  3.773 m/s  mechE=  7.1770 J  P_elec= 0.1964 W  store= 0.071 J [............] Vcap= 0.38 V  GEN=ON                     G=|==                  
+R02 t=02.40s  angle=  44.782 deg  omega=   1.552 rad/s  speed=  2.360 m/s  mechE=  6.9718 J  P_elec= 0.0000 W  store= 0.101 J [............] Vcap= 0.45 V  GEN=off                    ==|==          O       
+R02 t=02.80s  angle=  57.524 deg  omega=  -0.493 rad/s  speed=  0.750 m/s  mechE=  6.9607 J  P_elec= 0.0000 W  store= 0.101 J [............] Vcap= 0.45 V  GEN=off                    ==|==             O    
+R02 t=03.20s  angle=  24.592 deg  omega=  -2.203 rad/s  speed=  3.351 m/s  mechE=  6.9220 J  P_elec= 0.0000 W  store= 0.101 J [............] Vcap= 0.45 V  GEN=off                    ==|==    O             
+R02 t=03.60s  angle= -28.575 deg  omega=  -2.056 rad/s  speed=  3.126 m/s  mechE=  6.6444 J  P_elec= 0.0000 W  store= 0.152 J [............] Vcap= 0.55 V  GEN=off            O       ==|==                  
+R02 t=04.00s  angle= -56.831 deg  omega=  -0.266 rad/s  speed=  0.404 m/s  mechE=  6.6144 J  P_elec= 0.0000 W  store= 0.152 J [............] Vcap= 0.55 V  GEN=off      O             ==|==                  
+R02 t=04.40s  angle= -39.603 deg  omega=   1.687 rad/s  speed=  2.565 m/s  mechE=  6.5996 J  P_elec= 0.0000 W  store= 0.152 J [............] Vcap= 0.55 V  GEN=off         O          ==|==                  
+R02 t=04.80s  angle=  10.283 deg  omega=   2.306 rad/s  speed=  3.507 m/s  mechE=  6.3799 J  P_elec= 0.1696 W  store= 0.190 J [............] Vcap= 0.62 V  GEN=ON                     ==|==G                 
+R02 t=05.20s  angle=  50.406 deg  omega=   0.956 rad/s  speed=  1.454 m/s  mechE=  6.2877 J  P_elec= 0.0000 W  store= 0.200 J [............] Vcap= 0.63 V  GEN=off                    ==|==           O      
+R02 t=05.60s  angle=  49.201 deg  omega=  -1.053 rad/s  speed=  1.602 m/s  mechE=  6.2820 J  P_elec= 0.0000 W  store= 0.200 J [............] Vcap= 0.63 V  GEN=off                    ==|==           O      
+R02 t=06.00s  angle=   7.854 deg  omega=  -2.286 rad/s  speed=  3.476 m/s  mechE=  6.1756 J  P_elec= 0.1667 W  store= 0.216 J [............] Vcap= 0.66 V  GEN=ON                     ==|=G                  
+R02 t=06.40s  angle= -39.446 deg  omega=  -1.527 rad/s  speed=  2.322 m/s  mechE=  5.9803 J  P_elec= 0.0000 W  store= 0.248 J [............] Vcap= 0.70 V  GEN=off         O          ==|==                  
+R02 t=06.80s  angle= -53.267 deg  omega=   0.385 rad/s  speed=  0.586 m/s  mechE=  5.9690 J  P_elec= 0.0000 W  store= 0.248 J [............] Vcap= 0.70 V  GEN=off      O             ==|==                  
+R02 t=07.20s  angle= -23.836 deg  omega=   2.018 rad/s  speed=  3.068 m/s  mechE=  5.9377 J  P_elec= 0.0000 W  store= 0.248 J [............] Vcap= 0.70 V  GEN=off              O     ==|==                  
+R02 t=07.60s  angle=  25.433 deg  omega=   1.926 rad/s  speed=  2.930 m/s  mechE=  5.6892 J  P_elec= 0.0000 W  store= 0.294 J [............] Vcap= 0.77 V  GEN=off                    ==|==     O            
+R02 t=08.00s  angle=  52.194 deg  omega=   0.263 rad/s  speed=  0.400 m/s  mechE=  5.6624 J  P_elec= 0.0000 W  store= 0.294 J [............] Vcap= 0.77 V  GEN=off                    ==|==            O     
+R02 t=08.40s  angle=  36.231 deg  omega=  -1.573 rad/s  speed=  2.392 m/s  mechE=  5.6495 J  P_elec= 0.0000 W  store= 0.294 J [............] Vcap= 0.77 V  GEN=off                    ==|==        O         
+R02 t=08.80s  angle= -10.034 deg  omega=  -2.127 rad/s  speed=  3.234 m/s  mechE=  5.4511 J  P_elec= 0.1443 W  store= 0.329 J [............] Vcap= 0.81 V  GEN=ON                   G ==|==                  
+R02 t=09.20s  angle= -46.703 deg  omega=  -0.850 rad/s  speed=  1.292 m/s  mechE=  5.3670 J  P_elec= 0.0000 W  store= 0.337 J [#...........] Vcap= 0.82 V  GEN=off        O           ==|==                  
+R02 t=09.60s  angle= -44.394 deg  omega=   1.037 rad/s  speed=  1.578 m/s  mechE=  5.3618 J  P_elec= 0.0000 W  store= 0.337 J [#...........] Vcap= 0.82 V  GEN=off        O           ==|==                  
+R02 t=10.00s  angle=  -5.162 deg  omega=   2.119 rad/s  speed=  3.223 m/s  mechE=  5.2519 J  P_elec= 0.1433 W  store= 0.354 J [#...........] Vcap= 0.84 V  GEN=ON                     G=|==                  
+R02 t=10.40s  angle=  37.738 deg  omega=   1.338 rad/s  speed=  2.035 m/s  mechE=  5.0887 J  P_elec= 0.0000 W  store= 0.381 J [#...........] Vcap= 0.87 V  GEN=off                    ==|==        O         
+R02 t=10.80s  angle=  48.270 deg  omega=  -0.472 rad/s  speed=  0.717 m/s  mechE=  5.0805 J  P_elec= 0.0000 W  store= 0.381 J [#...........] Vcap= 0.87 V  GEN=off                    ==|==           O      
+R02 t=11.20s  angle=  18.774 deg  omega=  -1.924 rad/s  speed=  2.926 m/s  mechE=  5.0484 J  P_elec= 0.1181 W  store= 0.384 J [#...........] Vcap= 0.88 V  GEN=ON                     ==|==   G              
+R02 t=11.60s  angle= -26.380 deg  omega=  -1.696 rad/s  speed=  2.579 m/s  mechE=  4.8277 J  P_elec= 0.0000 W  store= 0.425 J [#...........] Vcap= 0.92 V  GEN=off             O      ==|==                  
+R02 t=12.00s  angle= -48.151 deg  omega=  -0.082 rad/s  speed=  0.125 m/s  mechE=  4.8089 J  P_elec= 0.0000 W  store= 0.425 J [#...........] Vcap= 0.92 V  GEN=off       O            ==|==                  
+------------------------------------------------------------------------------------------------------------------------
+summary: max_angle=62.17 deg, max_speed=3.875 m/s, mech_energy_range=4.8089..7.6918 J, harvested=0.4249 J, stored_final=0.4249 J, avg_power=0.03541 W, peak_power=0.20719 W, heat_loss=0.2604 J, generator_on=2.64 s, storage=not full, period=2.670 s, note=stable harvesting swing
+AI controller selected next harvester goal: strong generator load
+
+========================================================================================================================
+ROUND 3: PENDULUM ENERGY HARVESTER
+parameters: g=9.056 m/s^2, length=1.247 m, mass=1.000 kg, damping=0.0117, initial_angle=47.72 deg, initial_omega=-0.075 rad/s
+harvester: generator_load=0.1992, efficiency=0.62, engagement=±20.1 deg, cut_in_speed=0.26 m/s, storage=0.00/8.00 J
+------------------------------------------------------------------------------------------------------------------------
+R03 t=00.00s  angle=  47.721 deg  omega=  -0.075 rad/s  speed=  0.094 m/s  mechE=  3.7000 J  P_elec= 0.0000 W  store= 0.000 J [............] Vcap= 0.00 V  GEN=off                    ==|==           O      
+R03 t=00.40s  angle=  23.335 deg  omega=  -1.886 rad/s  speed=  2.352 m/s  mechE=  3.6897 J  P_elec= 0.0000 W  store= 0.000 J [............] Vcap= 0.00 V  GEN=off                    ==|==    O             
+R03 t=00.80s  angle= -22.612 deg  omega=  -1.736 rad/s  speed=  2.164 m/s  mechE=  3.2101 J  P_elec= 0.0000 W  store= 0.174 J [............] Vcap= 0.59 V  GEN=off              O     ==|==                  
+R03 t=01.20s  angle= -44.236 deg  omega=  -0.002 rad/s  speed=  0.003 m/s  mechE=  3.2017 J  P_elec= 0.0000 W  store= 0.174 J [............] Vcap= 0.59 V  GEN=off        O           ==|==                  
+R03 t=01.60s  angle= -22.761 deg  omega=   1.725 rad/s  speed=  2.151 m/s  mechE=  3.1934 J  P_elec= 0.0000 W  store= 0.174 J [............] Vcap= 0.59 V  GEN=off              O     ==|==                  
+R03 t=02.00s  angle=  19.979 deg  omega=   1.635 rad/s  speed=  2.039 m/s  mechE=  2.7584 J  P_elec= 0.3303 W  store= 0.338 J [#...........] Vcap= 0.82 V  GEN=ON                     ==|==   G              
+R03 t=02.40s  angle=  40.822 deg  omega=   0.035 rad/s  speed=  0.044 m/s  mechE=  2.7480 J  P_elec= 0.0000 W  store= 0.338 J [#...........] Vcap= 0.82 V  GEN=off                    ==|==         O        
+R03 t=02.80s  angle=  21.410 deg  omega=  -1.589 rad/s  speed=  1.981 m/s  mechE=  2.7410 J  P_elec= 0.0000 W  store= 0.338 J [#...........] Vcap= 0.82 V  GEN=off                    ==|==   O              
+R03 t=03.20s  angle= -18.141 deg  omega=  -1.522 rad/s  speed=  1.898 m/s  mechE=  2.3628 J  P_elec= 0.2862 W  store= 0.485 J [#...........] Vcap= 0.98 V  GEN=ON                 G   ==|==                  
+R03 t=03.60s  angle= -37.547 deg  omega=  -0.034 rad/s  speed=  0.043 m/s  mechE=  2.3401 J  P_elec= 0.0000 W  store= 0.490 J [#...........] Vcap= 0.99 V  GEN=off          O         ==|==                  
+R03 t=04.00s  angle= -19.532 deg  omega=   1.471 rad/s  speed=  1.834 m/s  mechE=  2.3319 J  P_elec= 0.2673 W  store= 0.495 J [#...........] Vcap= 1.00 V  GEN=ON                G    ==|==                  
+R03 t=04.40s  angle=  16.863 deg  omega=   1.396 rad/s  speed=  1.741 m/s  mechE=  2.0003 J  P_elec= 0.2407 W  store= 0.620 J [#...........] Vcap= 1.11 V  GEN=ON                     ==|==  G               
+R03 t=04.80s  angle=  34.362 deg  omega=   0.009 rad/s  speed=  0.012 m/s  mechE=  1.9707 J  P_elec= 0.0000 W  store= 0.629 J [#...........] Vcap= 1.12 V  GEN=off                    ==|==       O          
+R03 t=05.20s  angle=  17.297 deg  omega=  -1.359 rad/s  speed=  1.694 m/s  mechE=  1.9456 J  P_elec= 0.2280 W  store= 0.637 J [#...........] Vcap= 1.13 V  GEN=ON                     ==|==  G               
+R03 t=05.60s  angle= -15.948 deg  omega=  -1.260 rad/s  speed=  1.571 m/s  mechE=  1.6688 J  P_elec= 0.1961 W  store= 0.741 J [#...........] Vcap= 1.22 V  GEN=ON                 G   ==|==                  
+R03 t=06.00s  angle= -31.229 deg  omega=   0.031 rad/s  speed=  0.039 m/s  mechE=  1.6370 J  P_elec= 0.0000 W  store= 0.751 J [#...........] Vcap= 1.23 V  GEN=off            O       ==|==                  
+R03 t=06.40s  angle= -14.857 deg  omega=   1.254 rad/s  speed=  1.563 m/s  mechE=  1.5990 J  P_elec= 0.1941 W  store= 0.766 J [#...........] Vcap= 1.24 V  GEN=ON                  G  ==|==                  
+R03 t=06.80s  angle=  15.261 deg  omega=   1.119 rad/s  speed=  1.395 m/s  mechE=  1.3718 J  P_elec= 0.1547 W  store= 0.851 J [#...........] Vcap= 1.30 V  GEN=ON                     ==|==  G               
+R03 t=07.20s  angle=  28.158 deg  omega=  -0.081 rad/s  speed=  0.101 m/s  mechE=  1.3415 J  P_elec= 0.0000 W  store= 0.861 J [#...........] Vcap= 1.31 V  GEN=off                    ==|==     O            
+R03 t=07.60s  angle=  12.349 deg  omega=  -1.153 rad/s  speed=  1.438 m/s  mechE=  1.2949 J  P_elec= 0.1642 W  store= 0.880 J [#...........] Vcap= 1.33 V  GEN=ON                     ==|== G                
+R03 t=08.00s  angle= -14.688 deg  omega=  -0.977 rad/s  speed=  1.219 m/s  mechE=  1.1116 J  P_elec= 0.1180 W  store= 0.948 J [#...........] Vcap= 1.38 V  GEN=ON                  G  ==|==                  
+R03 t=08.40s  angle= -25.135 deg  omega=   0.134 rad/s  speed=  0.167 m/s  mechE=  1.0833 J  P_elec= 0.0000 W  store= 0.957 J [#...........] Vcap= 1.38 V  GEN=off             O      ==|==                  
+R03 t=08.80s  angle=  -9.880 deg  omega=   1.053 rad/s  speed=  1.313 m/s  mechE=  1.0290 J  P_elec= 0.1369 W  store= 0.978 J [#...........] Vcap= 1.40 V  GEN=ON                   G ==|==                  
+R03 t=09.20s  angle=  14.094 deg  omega=   0.837 rad/s  speed=  1.044 m/s  mechE=  0.8846 J  P_elec= 0.0865 W  store= 1.032 J [##..........] Vcap= 1.44 V  GEN=ON                     ==|== G                
+R03 t=09.60s  angle=  22.171 deg  omega=  -0.183 rad/s  speed=  0.229 m/s  mechE=  0.8611 J  P_elec= 0.0000 W  store= 1.040 J [##..........] Vcap= 1.44 V  GEN=off                    ==|==    O             
+R03 t=10.00s  angle=   7.587 deg  omega=  -0.953 rad/s  speed=  1.188 m/s  mechE=  0.8046 J  P_elec= 0.1121 W  store= 1.062 J [##..........] Vcap= 1.46 V  GEN=ON                     ==|=G                  
+R03 t=10.40s  angle= -13.420 deg  omega=  -0.704 rad/s  speed=  0.878 m/s  mechE=  0.6935 J  P_elec= 0.0612 W  store= 1.103 J [##..........] Vcap= 1.49 V  GEN=ON                  G  ==|==                  
+R03 t=10.80s  angle= -19.334 deg  omega=   0.224 rad/s  speed=  0.279 m/s  mechE=  0.6758 J  P_elec= 0.0062 W  store= 1.110 J [##..........] Vcap= 1.49 V  GEN=ON                G    ==|==                  
+R03 t=11.20s  angle=  -5.512 deg  omega=   0.857 rad/s  speed=  1.069 m/s  mechE=  0.6234 J  P_elec= 0.0908 W  store= 1.130 J [##..........] Vcap= 1.50 V  GEN=ON                     G=|==                  
+R03 t=11.60s  angle=  12.714 deg  omega=   0.581 rad/s  speed=  0.725 m/s  mechE=  0.5394 J  P_elec= 0.0417 W  store= 1.161 J [##..........] Vcap= 1.52 V  GEN=ON                     ==|== G                
+R03 t=12.00s  angle=  16.754 deg  omega=  -0.251 rad/s  speed=  0.313 m/s  mechE=  0.5284 J  P_elec= 0.0078 W  store= 1.165 J [##..........] Vcap= 1.53 V  GEN=ON                     ==|==  G               
+------------------------------------------------------------------------------------------------------------------------
+summary: max_angle=47.72 deg, max_speed=2.631 m/s, mech_energy_range=0.5284..3.7000 J, harvested=1.1651 J, stored_final=1.1651 J, avg_power=0.09709 W, peak_power=0.54993 W, heat_loss=0.7141 J, generator_on=6.00 s, storage=not full, period=2.382 s, note=heavily loaded harvester
+AI controller selected next harvester goal: low load long run
+
+========================================================================================================================
+ROUND 4: PENDULUM ENERGY HARVESTER
+parameters: g=9.753 m/s^2, length=2.342 m, mass=1.000 kg, damping=0.0112, initial_angle=50.00 deg, initial_omega=0.191 rad/s
+harvester: generator_load=0.0078, efficiency=0.62, engagement=±20.6 deg, cut_in_speed=0.16 m/s, storage=0.00/8.00 J
+------------------------------------------------------------------------------------------------------------------------
+R04 t=00.00s  angle=  50.000 deg  omega=   0.191 rad/s  speed=  0.446 m/s  mechE=  8.2604 J  P_elec= 0.0000 W  store= 0.000 J [............] Vcap= 0.00 V  GEN=off                    ==|==           O      
+R04 t=00.40s  angle=  39.978 deg  omega=  -1.030 rad/s  speed=  2.414 m/s  mechE=  8.2526 J  P_elec= 0.0000 W  store= 0.000 J [............] Vcap= 0.00 V  GEN=off                    ==|==         O        
+R04 t=00.80s  angle=   6.881 deg  omega=  -1.710 rad/s  speed=  4.005 m/s  mechE=  8.1834 J  P_elec= 0.0142 W  store= 0.002 J [............] Vcap= 0.07 V  GEN=ON                     ==|=G                  
+R04 t=01.20s  angle= -30.161 deg  omega=  -1.349 rad/s  speed=  3.160 m/s  mechE=  8.0843 J  P_elec= 0.0000 W  store= 0.006 J [............] Vcap= 0.11 V  GEN=off            O       ==|==                  
+R04 t=01.60s  angle= -49.162 deg  omega=  -0.240 rad/s  speed=  0.563 m/s  mechE=  8.0648 J  P_elec= 0.0000 W  store= 0.006 J [............] Vcap= 0.11 V  GEN=off       O            ==|==                  
+R04 t=02.00s  angle= -40.371 deg  omega=   0.977 rad/s  speed=  2.288 m/s  mechE=  8.0581 J  P_elec= 0.0000 W  store= 0.006 J [............] Vcap= 0.11 V  GEN=off         O          ==|==                  
+R04 t=02.40s  angle=  -8.276 deg  omega=   1.681 rad/s  speed=  3.938 m/s  mechE=  7.9932 J  P_elec= 0.0137 W  store= 0.008 J [............] Vcap= 0.12 V  GEN=ON                    G==|==                  
+R04 t=02.80s  angle=  28.617 deg  omega=   1.364 rad/s  speed=  3.194 m/s  mechE=  7.8932 J  P_elec= 0.0000 W  store= 0.012 J [............] Vcap= 0.15 V  GEN=off                    ==|==      O           
+R04 t=03.20s  angle=  48.318 deg  omega=   0.283 rad/s  speed=  0.662 m/s  mechE=  7.8725 J  P_elec= 0.0000 W  store= 0.012 J [............] Vcap= 0.15 V  GEN=off                    ==|==           O      
+R04 t=03.60s  angle=  40.602 deg  omega=  -0.929 rad/s  speed=  2.175 m/s  mechE=  7.8667 J  P_elec= 0.0000 W  store= 0.012 J [............] Vcap= 0.15 V  GEN=off                    ==|==         O        
+R04 t=04.00s  angle=   9.438 deg  omega=  -1.653 rad/s  speed=  3.872 m/s  mechE=  7.8065 J  P_elec= 0.0132 W  store= 0.013 J [............] Vcap= 0.16 V  GEN=ON                     ==|==G                 
+R04 t=04.40s  angle= -27.238 deg  omega=  -1.373 rad/s  speed=  3.217 m/s  mechE=  7.7065 J  P_elec= 0.0000 W  store= 0.017 J [............] Vcap= 0.19 V  GEN=off             O      ==|==                  
+R04 t=04.80s  angle= -47.488 deg  omega=  -0.318 rad/s  speed=  0.744 m/s  mechE=  7.6849 J  P_elec= 0.0000 W  store= 0.017 J [............] Vcap= 0.19 V  GEN=off       O            ==|==                  
+R04 t=05.20s  angle= -40.696 deg  omega=   0.886 rad/s  speed=  2.076 m/s  mechE=  7.6797 J  P_elec= 0.0000 W  store= 0.017 J [............] Vcap= 0.19 V  GEN=off         O          ==|==                  
+R04 t=05.60s  angle= -10.384 deg  omega=   1.625 rad/s  speed=  3.808 m/s  mechE=  7.6231 J  P_elec= 0.0128 W  store= 0.019 J [............] Vcap= 0.19 V  GEN=ON                   G ==|==                  
+R04 t=06.00s  angle=  26.021 deg  omega=   1.378 rad/s  speed=  3.227 m/s  mechE=  7.5229 J  P_elec= 0.0000 W  store= 0.023 J [............] Vcap= 0.21 V  GEN=off                    ==|==     O            
+R04 t=06.40s  angle=  46.679 deg  omega=   0.346 rad/s  speed=  0.811 m/s  mechE=  7.5006 J  P_elec= 0.0000 W  store= 0.023 J [............] Vcap= 0.21 V  GEN=off                    ==|==          O       
+R04 t=06.80s  angle=  40.665 deg  omega=  -0.849 rad/s  speed=  1.990 m/s  mechE=  7.4959 J  P_elec= 0.0000 W  store= 0.023 J [............] Vcap= 0.21 V  GEN=off                    ==|==         O        
+R04 t=07.20s  angle=  11.124 deg  omega=  -1.599 rad/s  speed=  3.745 m/s  mechE=  7.4431 J  P_elec= 0.0124 W  store= 0.024 J [............] Vcap= 0.22 V  GEN=ON                     ==|==G                 
+R04 t=07.60s  angle= -24.968 deg  omega=  -1.378 rad/s  speed=  3.228 m/s  mechE=  7.3441 J  P_elec= 0.0000 W  store= 0.029 J [............] Vcap= 0.24 V  GEN=off             O      ==|==                  
+R04 t=08.00s  angle= -45.907 deg  omega=  -0.368 rad/s  speed=  0.863 m/s  mechE=  7.3214 J  P_elec= 0.0000 W  store= 0.029 J [............] Vcap= 0.24 V  GEN=off        O           ==|==                  
+R04 t=08.40s  angle= -40.531 deg  omega=   0.818 rad/s  speed=  1.916 m/s  mechE=  7.3171 J  P_elec= 0.0000 W  store= 0.029 J [............] Vcap= 0.24 V  GEN=off         O          ==|==                  
+R04 t=08.80s  angle= -11.676 deg  omega=   1.574 rad/s  speed=  3.686 m/s  mechE=  7.2666 J  P_elec= 0.0120 W  store= 0.030 J [............] Vcap= 0.24 V  GEN=ON                   G ==|==                  
+R04 t=09.20s  angle=  24.071 deg  omega=   1.374 rad/s  speed=  3.219 m/s  mechE=  7.1683 J  P_elec= 0.0000 W  store= 0.034 J [............] Vcap= 0.26 V  GEN=off                    ==|==    O             
+R04 t=09.60s  angle=  45.171 deg  omega=   0.384 rad/s  speed=  0.901 m/s  mechE=  7.1454 J  P_elec= 0.0000 W  store= 0.034 J [............] Vcap= 0.26 V  GEN=off                    ==|==          O       
+R04 t=10.00s  angle=  40.299 deg  omega=  -0.792 rad/s  speed=  1.854 m/s  mechE=  7.1414 J  P_elec= 0.0000 W  store= 0.034 J [............] Vcap= 0.26 V  GEN=off                    ==|==         O        
+R04 t=10.40s  angle=  12.050 deg  omega=  -1.550 rad/s  speed=  3.630 m/s  mechE=  7.0933 J  P_elec= 0.0116 W  store= 0.035 J [............] Vcap= 0.26 V  GEN=ON                     ==|==G                 
+R04 t=10.80s  angle= -23.327 deg  omega=  -1.367 rad/s  speed=  3.203 m/s  mechE=  6.9966 J  P_elec= 0.0000 W  store= 0.039 J [............] Vcap= 0.28 V  GEN=off              O     ==|==                  
+R04 t=11.20s  angle= -44.480 deg  omega=  -0.395 rad/s  speed=  0.925 m/s  mechE=  6.9736 J  P_elec= 0.0000 W  store= 0.039 J [............] Vcap= 0.28 V  GEN=off        O           ==|==                  
+R04 t=11.60s  angle= -39.985 deg  omega=   0.770 rad/s  speed=  1.805 m/s  mechE=  6.9698 J  P_elec= 0.0000 W  store= 0.039 J [............] Vcap= 0.28 V  GEN=off         O          ==|==                  
+R04 t=12.00s  angle= -12.258 deg  omega=   1.528 rad/s  speed=  3.578 m/s  mechE=  6.9234 J  P_elec= 0.0113 W  store= 0.040 J [............] Vcap= 0.28 V  GEN=ON                  G  ==|==                  
+------------------------------------------------------------------------------------------------------------------------
+summary: max_angle=50.33 deg, max_speed=4.040 m/s, mech_energy_range=6.9234..8.2604 J, harvested=0.0404 J, stored_final=0.0404 J, avg_power=0.00336 W, peak_power=0.01441 W, heat_loss=0.0247 J, generator_on=3.24 s, storage=not full, period=3.220 s, note=stable harvesting swing
+AI controller selected next harvester goal: narrow pickup coil
+
+========================================================================================================================
+ROUND 5: PENDULUM ENERGY HARVESTER
+parameters: g=9.444 m/s^2, length=0.882 m, mass=1.000 kg, damping=0.0127, initial_angle=69.48 deg, initial_omega=-0.255 rad/s
+harvester: generator_load=0.1007, efficiency=0.62, engagement=±9.5 deg, cut_in_speed=0.27 m/s, storage=0.00/8.00 J
+------------------------------------------------------------------------------------------------------------------------
+R05 t=00.00s  angle=  69.484 deg  omega=  -0.255 rad/s  speed=  0.225 m/s  mechE=  5.4386 J  P_elec= 0.0000 W  store= 0.000 J [............] Vcap= 0.00 V  GEN=off                    ==|==              O   
+R05 t=00.40s  angle=  21.774 deg  omega=  -3.520 rad/s  speed=  3.106 m/s  mechE=  5.4177 J  P_elec= 0.0000 W  store= 0.000 J [............] Vcap= 0.00 V  GEN=off                    ==|==    O             
+R05 t=00.80s  angle= -53.650 deg  omega=  -2.201 rad/s  speed=  1.943 m/s  mechE=  5.2811 J  P_elec= 0.0000 W  store= 0.085 J [............] Vcap= 0.41 V  GEN=off      O             ==|==                  
+R05 t=01.20s  angle= -60.345 deg  omega=   1.654 rad/s  speed=  1.460 m/s  mechE=  5.2758 J  P_elec= 0.0000 W  store= 0.085 J [............] Vcap= 0.41 V  GEN=off     O              ==|==                  
+R05 t=01.60s  angle=   8.777 deg  omega=   3.603 rad/s  speed=  3.179 m/s  mechE=  5.1515 J  P_elec= 0.8105 W  store= 0.168 J [............] Vcap= 0.58 V  GEN=ON                     ==|=G                  
+R05 t=02.00s  angle=  65.412 deg  omega=   0.809 rad/s  speed=  0.714 m/s  mechE=  5.1211 J  P_elec= 0.0000 W  store= 0.168 J [............] Vcap= 0.58 V  GEN=off                    ==|==              O   
+R05 t=02.40s  angle=  39.992 deg  omega=  -2.850 rad/s  speed=  2.515 m/s  mechE=  5.1116 J  P_elec= 0.0000 W  store= 0.168 J [............] Vcap= 0.58 V  GEN=off                    ==|==         O        
+R05 t=02.80s  angle= -36.848 deg  omega=  -2.915 rad/s  speed=  2.572 m/s  mechE=  4.9729 J  P_elec= 0.0000 W  store= 0.232 J [............] Vcap= 0.68 V  GEN=off          O         ==|==                  
+R05 t=03.20s  angle= -64.803 deg  omega=   0.673 rad/s  speed=  0.594 m/s  mechE=  4.9626 J  P_elec= 0.0000 W  store= 0.232 J [............] Vcap= 0.68 V  GEN=off    O               ==|==                  
+R05 t=03.60s  angle= -11.180 deg  omega=   3.504 rad/s  speed=  3.092 m/s  mechE=  4.9380 J  P_elec= 0.0000 W  store= 0.232 J [............] Vcap= 0.68 V  GEN=off                  O ==|==                  
+R05 t=04.00s  angle=  56.406 deg  omega=   1.667 rad/s  speed=  1.471 m/s  mechE=  4.8048 J  P_elec= 0.0000 W  store= 0.310 J [............] Vcap= 0.79 V  GEN=off                    ==|==            O     
+R05 t=04.40s  angle=  51.329 deg  omega=  -2.073 rad/s  speed=  1.829 m/s  mechE=  4.7998 J  P_elec= 0.0000 W  store= 0.310 J [............] Vcap= 0.79 V  GEN=off                    ==|==           O      
+R05 t=04.80s  angle= -19.765 deg  omega=  -3.280 rad/s  speed=  2.894 m/s  mechE=  4.6790 J  P_elec= 0.0000 W  store= 0.385 J [#...........] Vcap= 0.88 V  GEN=off               O    ==|==                  
+R05 t=05.20s  angle= -63.756 deg  omega=  -0.176 rad/s  speed=  0.156 m/s  mechE=  4.6610 J  P_elec= 0.0000 W  store= 0.385 J [#...........] Vcap= 0.88 V  GEN=off    O               ==|==                  
+R05 t=05.60s  angle= -26.625 deg  omega=   3.109 rad/s  speed=  2.743 m/s  mechE=  4.6468 J  P_elec= 0.0000 W  store= 0.385 J [#...........] Vcap= 0.88 V  GEN=off             O      ==|==                  
+R05 t=06.00s  angle=  45.222 deg  omega=   2.302 rad/s  speed=  2.032 m/s  mechE=  4.5279 J  P_elec= 0.0000 W  store= 0.458 J [#...........] Vcap= 0.96 V  GEN=off                    ==|==          O       
+R05 t=06.40s  angle=  57.307 deg  omega=  -1.331 rad/s  speed=  1.175 m/s  mechE=  4.5223 J  P_elec= 0.0000 W  store= 0.458 J [#...........] Vcap= 0.96 V  GEN=off                    ==|==            O     
+R05 t=06.80s  angle=  -4.393 deg  omega=  -3.361 rad/s  speed=  2.966 m/s  mechE=  4.4236 J  P_elec= 0.7055 W  store= 0.515 J [#...........] Vcap= 1.01 V  GEN=ON                     G=|==                  
+R05 t=07.20s  angle= -59.289 deg  omega=  -0.878 rad/s  speed=  0.775 m/s  mechE=  4.3782 J  P_elec= 0.0000 W  store= 0.529 J [#...........] Vcap= 1.03 V  GEN=off     O              ==|==                  
+R05 t=07.60s  angle= -37.542 deg  omega=   2.606 rad/s  speed=  2.300 m/s  mechE=  4.3704 J  P_elec= 0.0000 W  store= 0.529 J [#...........] Vcap= 1.03 V  GEN=off          O         ==|==                  
+R05 t=08.00s  angle=  33.447 deg  omega=   2.713 rad/s  speed=  2.394 m/s  mechE=  4.2463 J  P_elec= 0.0000 W  store= 0.597 J [#...........] Vcap= 1.09 V  GEN=off                    ==|==       O          
+R05 t=08.40s  angle=  59.150 deg  omega=  -0.674 rad/s  speed=  0.595 m/s  mechE=  4.2374 J  P_elec= 0.0000 W  store= 0.597 J [#...........] Vcap= 1.09 V  GEN=off                    ==|==             O    
+R05 t=08.80s  angle=   8.257 deg  omega=  -3.255 rad/s  speed=  2.873 m/s  mechE=  4.2126 J  P_elec= 0.6617 W  store= 0.610 J [#...........] Vcap= 1.10 V  GEN=ON                     ==|=G                  
+R05 t=09.20s  angle= -52.965 deg  omega=  -1.423 rad/s  speed=  1.256 m/s  mechE=  4.1026 J  P_elec= 0.0000 W  store= 0.663 J [#...........] Vcap= 1.15 V  GEN=off      O             ==|==                  
+R05 t=09.60s  angle= -44.458 deg  omega=   2.097 rad/s  speed=  1.851 m/s  mechE=  4.0979 J  P_elec= 0.0000 W  store= 0.663 J [#...........] Vcap= 1.15 V  GEN=off        O           ==|==                  
+R05 t=10.00s  angle=  22.593 deg  omega=   2.930 rad/s  speed=  2.586 m/s  mechE=  3.9830 J  P_elec= 0.0000 W  store= 0.727 J [#...........] Vcap= 1.21 V  GEN=off                    ==|==    O             
+R05 t=10.40s  angle=  58.372 deg  omega=  -0.128 rad/s  speed=  0.113 m/s  mechE=  3.9701 J  P_elec= 0.0000 W  store= 0.727 J [#...........] Vcap= 1.21 V  GEN=off                    ==|==             O    
+R05 t=10.80s  angle=  17.917 deg  omega=  -3.020 rad/s  speed=  2.665 m/s  mechE=  3.9548 J  P_elec= 0.0000 W  store= 0.727 J [#...........] Vcap= 1.21 V  GEN=off                    ==|==  O               
+R05 t=11.20s  angle= -46.039 deg  omega=  -1.818 rad/s  speed=  1.604 m/s  mechE=  3.8353 J  P_elec= 0.0000 W  store= 0.789 J [#...........] Vcap= 1.26 V  GEN=off        O           ==|==                  
+R05 t=11.60s  angle= -48.294 deg  omega=   1.636 rad/s  speed=  1.443 m/s  mechE=  3.8312 J  P_elec= 0.0000 W  store= 0.789 J [#...........] Vcap= 1.26 V  GEN=off       O            ==|==                  
+R05 t=12.00s  angle=  13.346 deg  omega=   2.999 rad/s  speed=  2.646 m/s  mechE=  3.7264 J  P_elec= 0.0000 W  store= 0.849 J [#...........] Vcap= 1.30 V  GEN=off                    ==|== O                
+------------------------------------------------------------------------------------------------------------------------
+summary: max_angle=69.48 deg, max_speed=3.273 m/s, mech_energy_range=3.7264..5.4386 J, harvested=0.8493 J, stored_final=0.8493 J, avg_power=0.07078 W, peak_power=0.85909 W, heat_loss=0.5206 J, generator_on=1.18 s, storage=not full, period=2.076 s, note=stable harvesting swing
+AI controller selected next harvester goal: wide pickup coil
+
+========================================================================================================================
+ROUND 6: PENDULUM ENERGY HARVESTER
+parameters: g=9.848 m/s^2, length=0.850 m, mass=1.000 kg, damping=0.0068, initial_angle=46.18 deg, initial_omega=0.144 rad/s
+harvester: generator_load=0.0699, efficiency=0.62, engagement=±33.3 deg, cut_in_speed=0.27 m/s, storage=0.00/8.00 J
+------------------------------------------------------------------------------------------------------------------------
+R06 t=00.00s  angle=  46.179 deg  omega=   0.144 rad/s  speed=  0.123 m/s  mechE=  2.5829 J  P_elec= 0.0000 W  store= 0.000 J [............] Vcap= 0.00 V  GEN=off                    ==|==          O       
+R06 t=00.40s  angle=  14.894 deg  omega=  -2.501 rad/s  speed=  2.126 m/s  mechE=  2.5423 J  P_elec= 0.2712 W  store= 0.034 J [............] Vcap= 0.26 V  GEN=ON                     ==|== G                
+R06 t=00.80s  angle= -37.519 deg  omega=  -1.388 rad/s  speed=  1.180 m/s  mechE=  2.4284 J  P_elec= 0.0000 W  store= 0.119 J [............] Vcap= 0.49 V  GEN=off          O         ==|==                  
+R06 t=01.20s  angle= -33.650 deg  omega=   1.683 rad/s  speed=  1.431 m/s  mechE=  2.4267 J  P_elec= 0.0000 W  store= 0.119 J [............] Vcap= 0.49 V  GEN=off           O        ==|==                  
+R06 t=01.60s  angle=  19.612 deg  omega=   2.244 rad/s  speed=  1.908 m/s  mechE=  2.3062 J  P_elec= 0.2184 W  store= 0.215 J [............] Vcap= 0.66 V  GEN=ON                     ==|==   G              
+R06 t=02.00s  angle=  42.379 deg  omega=  -0.503 rad/s  speed=  0.428 m/s  mechE=  2.2793 J  P_elec= 0.0000 W  store= 0.234 J [............] Vcap= 0.68 V  GEN=off                    ==|==         O        
+R06 t=02.40s  angle=   2.431 deg  omega=  -2.470 rad/s  speed=  2.100 m/s  mechE=  2.2123 J  P_elec= 0.2645 W  store= 0.287 J [............] Vcap= 0.76 V  GEN=ON                     ==G==                  
+R06 t=02.80s  angle= -39.977 deg  omega=  -0.704 rad/s  speed=  0.599 m/s  mechE=  2.1361 J  P_elec= 0.0000 W  store= 0.343 J [#...........] Vcap= 0.83 V  GEN=off         O          ==|==                  
+R06 t=03.20s  angle= -22.404 deg  omega=   2.027 rad/s  speed=  1.723 m/s  mechE=  2.1171 J  P_elec= 0.1782 W  store= 0.360 J [#...........] Vcap= 0.85 V  GEN=ON               G     ==|==                  
+R06 t=03.60s  angle=  27.998 deg  omega=   1.687 rad/s  speed=  1.435 m/s  mechE=  2.0091 J  P_elec= 0.1235 W  store= 0.444 J [#...........] Vcap= 0.94 V  GEN=ON                     ==|==     G            
+R06 t=04.00s  angle=  35.422 deg  omega=  -1.116 rad/s  speed=  0.949 m/s  mechE=  2.0002 J  P_elec= 0.0000 W  store= 0.449 J [#...........] Vcap= 0.95 V  GEN=off                    ==|==        O         
+R06 t=04.40s  angle=  -9.843 deg  omega=  -2.225 rad/s  speed=  1.892 m/s  mechE=  1.9131 J  P_elec= 0.2147 W  store= 0.519 J [#...........] Vcap= 1.02 V  GEN=ON                   G ==|==                  
+R06 t=04.80s  angle= -39.049 deg  omega=   0.019 rad/s  speed=  0.016 m/s  mechE=  1.8706 J  P_elec= 0.0000 W  store= 0.550 J [#...........] Vcap= 1.05 V  GEN=off          O         ==|==                  
+R06 t=05.20s  angle=  -9.578 deg  omega=   2.176 rad/s  speed=  1.850 m/s  mechE=  1.8284 J  P_elec= 0.2053 W  store= 0.584 J [#...........] Vcap= 1.08 V  GEN=ON                   G ==|==                  
+R06 t=05.60s  angle=  33.379 deg  omega=   1.007 rad/s  speed=  0.856 m/s  mechE=  1.7476 J  P_elec= 0.0000 W  store= 0.645 J [#...........] Vcap= 1.14 V  GEN=off                    ==|==       O          
+R06 t=06.00s  angle=  25.381 deg  omega=  -1.603 rad/s  speed=  1.363 m/s  mechE=  1.7368 J  P_elec= 0.1114 W  store= 0.654 J [#...........] Vcap= 1.14 V  GEN=ON                     ==|==     G            
+R06 t=06.40s  angle= -20.370 deg  omega=  -1.764 rad/s  speed=  1.500 m/s  mechE=  1.6479 J  P_elec= 0.1349 W  store= 0.724 J [#...........] Vcap= 1.20 V  GEN=ON                G    ==|==                  
+R06 t=06.80s  angle= -34.199 deg  omega=   0.711 rad/s  speed=  0.604 m/s  mechE=  1.6303 J  P_elec= 0.0000 W  store= 0.736 J [#...........] Vcap= 1.21 V  GEN=off           O        ==|==                  
+R06 t=07.20s  angle=   3.447 deg  omega=   2.072 rad/s  speed=  1.762 m/s  mechE=  1.5669 J  P_elec= 0.1861 W  store= 0.788 J [#...........] Vcap= 1.26 V  GEN=ON                     ==|G=                  
+R06 t=07.60s  angle=  34.750 deg  omega=   0.269 rad/s  speed=  0.229 m/s  mechE=  1.5196 J  P_elec= 0.0000 W  store= 0.823 J [#...........] Vcap= 1.28 V  GEN=off                    ==|==       O          
+R06 t=08.00s  angle=  13.137 deg  omega=  -1.876 rad/s  speed=  1.595 m/s  mechE=  1.4914 J  P_elec= 0.1526 W  store= 0.847 J [#...........] Vcap= 1.30 V  GEN=ON                     ==|== G                
+R06 t=08.40s  angle= -27.644 deg  omega=  -1.133 rad/s  speed=  0.963 m/s  mechE=  1.4197 J  P_elec= 0.0556 W  store= 0.902 J [#...........] Vcap= 1.34 V  GEN=ON              G      ==|==                  
+R06 t=08.80s  angle= -25.611 deg  omega=   1.273 rad/s  speed=  1.082 m/s  mechE=  1.4084 J  P_elec= 0.0703 W  store= 0.911 J [#...........] Vcap= 1.35 V  GEN=ON              G      ==|==                  
+R06 t=09.20s  angle=  14.930 deg  omega=   1.709 rad/s  speed=  1.453 m/s  mechE=  1.3383 J  P_elec= 0.1266 W  store= 0.966 J [#...........] Vcap= 1.39 V  GEN=ON                     ==|== G                
+R06 t=09.60s  angle=  31.653 deg  omega=  -0.446 rad/s  speed=  0.379 m/s  mechE=  1.3174 J  P_elec= 0.0086 W  store= 0.981 J [#...........] Vcap= 1.40 V  GEN=ON                     ==|==      G           
+R06 t=10.00s  angle=   0.232 deg  omega=  -1.876 rad/s  speed=  1.595 m/s  mechE=  1.2715 J  P_elec= 0.1525 W  store= 1.019 J [##..........] Vcap= 1.43 V  GEN=ON                     ==G==                  
+R06 t=10.40s  angle= -30.582 deg  omega=  -0.415 rad/s  speed=  0.353 m/s  mechE=  1.2270 J  P_elec= 0.0075 W  store= 1.052 J [##..........] Vcap= 1.45 V  GEN=ON             G       ==|==                  
+R06 t=10.80s  angle= -14.324 deg  omega=   1.619 rad/s  speed=  1.377 m/s  mechE=  1.2078 J  P_elec= 0.1137 W  store= 1.068 J [##..........] Vcap= 1.46 V  GEN=ON                  G  ==|==                  
+R06 t=11.20s  angle=  23.179 deg  omega=   1.143 rad/s  speed=  0.971 m/s  mechE=  1.1477 J  P_elec= 0.0566 W  store= 1.114 J [##..........] Vcap= 1.49 V  GEN=ON                     ==|==    G             
+R06 t=11.60s  angle=  24.412 deg  omega=  -1.039 rad/s  speed=  0.883 m/s  mechE=  1.1385 J  P_elec= 0.0468 W  store= 1.122 J [##..........] Vcap= 1.50 V  GEN=ON                     ==|==    G             
+R06 t=12.00s  angle= -11.395 deg  omega=  -1.594 rad/s  speed=  1.355 m/s  mechE=  1.0834 J  P_elec= 0.1102 W  store= 1.165 J [##..........] Vcap= 1.53 V  GEN=ON                   G ==|==                  
+------------------------------------------------------------------------------------------------------------------------
+summary: max_angle=46.25 deg, max_speed=2.238 m/s, mech_energy_range=1.0834..2.5829 J, harvested=1.1652 J, stored_final=1.1652 J, avg_power=0.09710 W, peak_power=0.30049 W, heat_loss=0.7141 J, generator_on=8.62 s, storage=not full, period=1.897 s, note=stable harvesting swing
+AI controller selected next harvester goal: fast short harvester
+
+========================================================================================================================
+ROUND 7: PENDULUM ENERGY HARVESTER
+parameters: g=11.586 m/s^2, length=0.515 m, mass=1.000 kg, damping=0.0288, initial_angle=54.46 deg, initial_omega=-0.409 rad/s
+harvester: generator_load=0.0917, efficiency=0.62, engagement=±23.9 deg, cut_in_speed=0.36 m/s, storage=0.00/8.00 J
+------------------------------------------------------------------------------------------------------------------------
+R07 t=00.00s  angle=  54.465 deg  omega=  -0.409 rad/s  speed=  0.211 m/s  mechE=  2.5205 J  P_elec= 0.0000 W  store= 0.000 J [............] Vcap= 0.00 V  GEN=off                    ==|==            O     
+R07 t=00.40s  angle= -16.880 deg  omega=  -4.032 rad/s  speed=  2.076 m/s  mechE=  2.4117 J  P_elec= 0.9242 W  store= 0.178 J [............] Vcap= 0.60 V  GEN=ON                 G   ==|==                  
+R07 t=00.80s  angle= -45.644 deg  omega=   2.106 rad/s  speed=  1.084 m/s  mechE=  2.3827 J  P_elec= 0.0000 W  store= 0.195 J [............] Vcap= 0.63 V  GEN=off        O           ==|==                  
+R07 t=01.20s  angle=  36.287 deg  omega=   2.884 rad/s  speed=  1.485 m/s  mechE=  2.2593 J  P_elec= 0.0000 W  store= 0.380 J [#...........] Vcap= 0.87 V  GEN=off                    ==|==        O         
+R07 t=01.60s  angle=  28.074 deg  omega=  -3.415 rad/s  speed=  1.758 m/s  mechE=  2.2478 J  P_elec= 0.0000 W  store= 0.380 J [#...........] Vcap= 0.87 V  GEN=off                    ==|==     O            
+R07 t=02.00s  angle= -47.384 deg  omega=  -1.251 rad/s  speed=  0.644 m/s  mechE=  2.1337 J  P_elec= 0.0000 W  store= 0.555 J [#...........] Vcap= 1.05 V  GEN=off        O           ==|==                  
+R07 t=02.40s  angle=  -5.034 deg  omega=   3.945 rad/s  speed=  2.031 m/s  mechE=  2.0863 J  P_elec= 0.8850 W  store= 0.637 J [#...........] Vcap= 1.13 V  GEN=ON                     G=|==                  
+R07 t=02.80s  angle=  48.042 deg  omega=  -0.545 rad/s  speed=  0.280 m/s  mechE=  2.0163 J  P_elec= 0.0000 W  store= 0.735 J [#...........] Vcap= 1.21 V  GEN=off                    ==|==           O      
+R07 t=03.20s  angle= -18.039 deg  omega=  -3.506 rad/s  speed=  1.805 m/s  mechE=  1.9220 J  P_elec= 0.6986 W  store= 0.891 J [#...........] Vcap= 1.33 V  GEN=ON                 G   ==|==                  
+R07 t=03.60s  angle= -38.047 deg  omega=   2.185 rad/s  speed=  1.125 m/s  mechE=  1.9005 J  P_elec= 0.0000 W  store= 0.904 J [#...........] Vcap= 1.34 V  GEN=off          O         ==|==                  
+R07 t=04.00s  angle=  35.511 deg  omega=   2.275 rad/s  speed=  1.171 m/s  mechE=  1.7952 J  P_elec= 0.0000 W  store= 1.075 J [##..........] Vcap= 1.47 V  GEN=off                    ==|==        O         
+R07 t=04.40s  angle=  19.432 deg  omega=  -3.295 rad/s  speed=  1.697 m/s  mechE=  1.7791 J  P_elec= 0.6174 W  store= 1.098 J [##..........] Vcap= 1.48 V  GEN=ON                     ==|==   G              
+R07 t=04.80s  angle= -43.540 deg  omega=  -0.609 rad/s  speed=  0.314 m/s  mechE=  1.6903 J  P_elec= 0.0000 W  store= 1.236 J [##..........] Vcap= 1.57 V  GEN=off        O           ==|==                  
+R07 t=05.20s  angle=   3.178 deg  omega=   3.500 rad/s  speed=  1.802 m/s  mechE=  1.6332 J  P_elec= 0.6966 W  store= 1.338 J [##..........] Vcap= 1.64 V  GEN=ON                     ==|G=                  
+R07 t=05.60s  angle=  40.427 deg  omega=  -1.115 rad/s  speed=  0.574 m/s  mechE=  1.5891 J  P_elec= 0.0000 W  store= 1.398 J [##..........] Vcap= 1.67 V  GEN=off                    ==|==         O        
+R07 t=06.00s  angle= -23.605 deg  omega=  -2.747 rad/s  speed=  1.415 m/s  mechE=  1.4997 J  P_elec= 0.4292 W  store= 1.549 J [##..........] Vcap= 1.76 V  GEN=ON               G     ==|==                  
+R07 t=06.40s  angle= -27.048 deg  omega=   2.515 rad/s  speed=  1.295 m/s  mechE=  1.4912 J  P_elec= 0.0000 W  store= 1.549 J [##..........] Vcap= 1.76 V  GEN=off             O      ==|==                  
+R07 t=06.80s  angle=  36.409 deg  omega=   1.343 rad/s  speed=  0.692 m/s  mechE=  1.4036 J  P_elec= 0.0000 W  store= 1.692 J [###.........] Vcap= 1.84 V  GEN=off                    ==|==        O         
+R07 t=07.20s  angle=   6.952 deg  omega=  -3.164 rad/s  speed=  1.629 m/s  mechE=  1.3710 J  P_elec= 0.5693 W  store= 1.750 J [###.........] Vcap= 1.87 V  GEN=ON                     ==|=G                  
+R07 t=07.60s  angle= -38.594 deg  omega=   0.317 rad/s  speed=  0.163 m/s  mechE=  1.3163 J  P_elec= 0.0000 W  store= 1.833 J [###.........] Vcap= 1.91 V  GEN=off          O         ==|==                  
+R07 t=08.00s  angle=  13.837 deg  omega=   2.852 rad/s  speed=  1.468 m/s  mechE=  1.2511 J  P_elec= 0.4624 W  store= 1.950 J [###.........] Vcap= 1.97 V  GEN=ON                     ==|== G                
+R07 t=08.40s  angle=  29.912 deg  omega=  -1.818 rad/s  speed=  0.936 m/s  mechE=  1.2327 J  P_elec= 0.0000 W  store= 1.973 J [###.........] Vcap= 1.99 V  GEN=off                    ==|==      O           
+R07 t=08.80s  angle= -29.151 deg  omega=  -1.737 rad/s  speed=  0.894 m/s  mechE=  1.1554 J  P_elec= 0.0000 W  store= 2.103 J [###.........] Vcap= 2.05 V  GEN=off            O       ==|==                  
+R07 t=09.20s  angle= -12.979 deg  omega=   2.725 rad/s  speed=  1.403 m/s  mechE=  1.1366 J  P_elec= 0.4221 W  store= 2.133 J [###.........] Vcap= 2.07 V  GEN=ON                  G  ==|==                  
+R07 t=09.60s  angle=  34.897 deg  omega=   0.219 rad/s  speed=  0.113 m/s  mechE=  1.0790 J  P_elec= 0.0000 W  store= 2.225 J [###.........] Vcap= 2.11 V  GEN=off                    ==|==       O          
+R07 t=10.00s  angle=  -6.742 deg  omega=  -2.734 rad/s  speed=  1.408 m/s  mechE=  1.0323 J  P_elec= 0.4251 W  store= 2.310 J [###.........] Vcap= 2.15 V  GEN=ON                    G==|==                  
+R07 t=10.40s  angle= -29.865 deg  omega=   1.273 rad/s  speed=  0.655 m/s  mechE=  1.0070 J  P_elec= 0.0000 W  store= 2.349 J [####........] Vcap= 2.17 V  GEN=off            O       ==|==                  
+R07 t=10.80s  angle=  22.903 deg  omega=   1.885 rad/s  speed=  0.971 m/s  mechE=  0.9414 J  P_elec= 0.2021 W  store= 2.464 J [####........] Vcap= 2.22 V  GEN=ON                     ==|==    G             
+R07 t=11.20s  angle=  15.936 deg  omega=  -2.298 rad/s  speed=  1.183 m/s  mechE=  0.9291 J  P_elec= 0.3002 W  store= 2.483 J [####........] Vcap= 2.23 V  GEN=ON                     ==|==  G               
+R07 t=11.60s  angle= -30.702 deg  omega=  -0.539 rad/s  speed=  0.277 m/s  mechE=  0.8746 J  P_elec= 0.0000 W  store= 2.574 J [####........] Vcap= 2.27 V  GEN=off            O       ==|==                  
+R07 t=12.00s  angle=   2.080 deg  omega=   2.512 rad/s  speed=  1.293 m/s  mechE=  0.8402 J  P_elec= 0.3587 W  store= 2.638 J [####........] Vcap= 2.30 V  GEN=ON                     ==G==                  
+------------------------------------------------------------------------------------------------------------------------
+summary: max_angle=54.46 deg, max_speed=2.214 m/s, mech_energy_range=0.8402..2.5205 J, harvested=2.6383 J, stored_final=2.6383 J, avg_power=0.21986 W, peak_power=1.05160 W, heat_loss=1.6170 J, generator_on=4.74 s, storage=not full, period=1.372 s, note=stable harvesting swing
+AI controller selected next harvester goal: storage fill test
+
+========================================================================================================================
+ROUND 8: PENDULUM ENERGY HARVESTER
+parameters: g=10.229 m/s^2, length=1.230 m, mass=1.000 kg, damping=0.0246, initial_angle=68.54 deg, initial_omega=-0.098 rad/s
+harvester: generator_load=0.1557, efficiency=0.62, engagement=±22.7 deg, cut_in_speed=0.22 m/s, storage=0.00/0.22 J
+------------------------------------------------------------------------------------------------------------------------
+R08 t=00.00s  angle=  68.542 deg  omega=  -0.098 rad/s  speed=  0.121 m/s  mechE=  7.9890 J  P_elec= 0.0000 W  store= 0.000 J [............] Vcap= 0.00 V  GEN=off                    ==|==              O   
+R08 t=00.40s  angle=  33.015 deg  omega=  -2.795 rad/s  speed=  3.438 m/s  mechE=  7.9438 J  P_elec= 0.0000 W  store= 0.000 J [............] Vcap= 0.00 V  GEN=off                    ==|==       O          
+R08 t=00.80s  angle= -35.542 deg  omega=  -2.542 rad/s  speed=  3.128 m/s  mechE=  7.2372 J  P_elec= 0.0000 W  store= 0.223 J [############] Vcap= 0.67 V  GEN=off          O         ==|==                  
+R08 t=01.20s  angle= -64.568 deg  omega=   0.174 rad/s  speed=  0.214 m/s  mechE=  7.2038 J  P_elec= 0.0000 W  store= 0.223 J [############] Vcap= 0.67 V  GEN=off    O               ==|==                  
+R08 t=01.60s  angle= -28.757 deg  omega=   2.722 rad/s  speed=  3.349 m/s  mechE=  7.1590 J  P_elec= 0.0000 W  store= 0.223 J [############] Vcap= 0.67 V  GEN=off            O       ==|==                  
+R08 t=02.00s  angle=  35.954 deg  omega=   2.328 rad/s  speed=  2.864 m/s  mechE=  6.4993 J  P_elec= 0.0000 W  store= 0.224 J [############] Vcap= 0.67 V  GEN=off                    ==|==        O         
+R08 t=02.40s  angle=  60.513 deg  omega=  -0.330 rad/s  speed=  0.406 m/s  mechE=  6.4731 J  P_elec= 0.0000 W  store= 0.224 J [############] Vcap= 0.67 V  GEN=off                    ==|==             O    
+R08 t=02.80s  angle=  23.045 deg  omega=  -2.676 rad/s  speed=  3.293 m/s  mechE=  6.4261 J  P_elec= 0.0000 W  store= 0.224 J [############] Vcap= 0.67 V  GEN=off                    ==|==    O             
+R08 t=03.20s  angle= -37.442 deg  omega=  -2.063 rad/s  speed=  2.539 m/s  mechE=  5.8151 J  P_elec= 0.0000 W  store= 0.224 J [############] Vcap= 0.67 V  GEN=off          O         ==|==                  
+R08 t=03.60s  angle= -56.124 deg  omega=   0.546 rad/s  speed=  0.672 m/s  mechE=  5.7965 J  P_elec= 0.0000 W  store= 0.224 J [############] Vcap= 0.67 V  GEN=off      O             ==|==                  
+R08 t=04.00s  angle= -16.196 deg  omega=   2.616 rad/s  speed=  3.218 m/s  mechE=  5.6781 J  P_elec= 0.0000 W  store= 0.224 J [############] Vcap= 0.67 V  GEN=off                O   ==|==                  
+R08 t=04.40s  angle=  39.348 deg  omega=   1.749 rad/s  speed=  2.151 m/s  mechE=  5.1672 J  P_elec= 0.0000 W  store= 0.224 J [############] Vcap= 0.67 V  GEN=off                    ==|==         O        
+R08 t=04.80s  angle=  51.013 deg  omega=  -0.803 rad/s  speed=  0.987 m/s  mechE=  5.1550 J  P_elec= 0.0000 W  store= 0.224 J [############] Vcap= 0.67 V  GEN=off                    ==|==           O      
+R08 t=05.20s  angle=   8.516 deg  omega=  -2.522 rad/s  speed=  3.103 m/s  mechE=  4.9539 J  P_elec= 0.0000 W  store= 0.224 J [############] Vcap= 0.67 V  GEN=off                    ==|=O                  
+R08 t=05.60s  angle= -41.111 deg  omega=  -1.392 rad/s  speed=  1.712 m/s  mechE=  4.5690 J  P_elec= 0.0000 W  store= 0.224 J [############] Vcap= 0.67 V  GEN=off         O          ==|==                  
+R08 t=06.00s  angle= -45.017 deg  omega=   1.073 rad/s  speed=  1.320 m/s  mechE=  4.5608 J  P_elec= 0.0000 W  store= 0.224 J [############] Vcap= 0.67 V  GEN=off        O           ==|==                  
+R08 t=06.40s  angle=  -0.463 deg  omega=   2.382 rad/s  speed=  2.930 m/s  mechE=  4.2940 J  P_elec= 0.0000 W  store= 0.224 J [############] Vcap= 0.67 V  GEN=off                    =O|==                  
+R08 t=06.80s  angle=  42.231 deg  omega=   0.999 rad/s  speed=  1.229 m/s  mechE=  4.0219 J  P_elec= 0.0000 W  store= 0.224 J [############] Vcap= 0.67 V  GEN=off                    ==|==         O        
+R08 t=07.20s  angle=  37.994 deg  omega=  -1.334 rad/s  speed=  1.641 m/s  mechE=  4.0144 J  P_elec= 0.0000 W  store= 0.224 J [############] Vcap= 0.67 V  GEN=off                    ==|==        O         
+R08 t=07.60s  angle=  -7.472 deg  omega=  -2.174 rad/s  speed=  2.675 m/s  mechE=  3.6835 J  P_elec= 0.0000 W  store= 0.224 J [############] Vcap= 0.67 V  GEN=off                   O==|==                  
+R08 t=08.00s  angle= -42.165 deg  omega=  -0.583 rad/s  speed=  0.717 m/s  mechE=  3.5141 J  P_elec= 0.0000 W  store= 0.224 J [############] Vcap= 0.67 V  GEN=off         O          ==|==                  
+R08 t=08.40s  angle= -29.925 deg  omega=   1.553 rad/s  speed=  1.911 m/s  mechE=  3.5040 J  P_elec= 0.0000 W  store= 0.224 J [############] Vcap= 0.67 V  GEN=off            O       ==|==                  
+R08 t=08.80s  angle=  14.783 deg  omega=   1.896 rad/s  speed=  2.333 m/s  mechE=  3.1386 J  P_elec= 0.0000 W  store= 0.224 J [############] Vcap= 0.67 V  GEN=off                    ==|== O                
+R08 t=09.20s  angle=  40.658 deg  omega=   0.162 rad/s  speed=  0.199 m/s  mechE=  3.0578 J  P_elec= 0.0000 W  store= 0.224 J [############] Vcap= 0.67 V  GEN=off                    ==|==         O        
+R08 t=09.60s  angle=  21.101 deg  omega=  -1.700 rad/s  speed=  2.092 m/s  mechE=  3.0314 J  P_elec= 0.0000 W  store= 0.224 J [############] Vcap= 0.67 V  GEN=off                    ==|==   O              
+R08 t=10.00s  angle= -20.900 deg  omega=  -1.557 rad/s  speed=  1.916 m/s  mechE=  2.6635 J  P_elec= 0.0000 W  store= 0.224 J [############] Vcap= 0.67 V  GEN=off               O    ==|==                  
+R08 t=10.40s  angle= -37.448 deg  omega=   0.244 rad/s  speed=  0.300 m/s  mechE=  2.6389 J  P_elec= 0.0000 W  store= 0.224 J [############] Vcap= 0.67 V  GEN=off          O         ==|==                  
+R08 t=10.80s  angle= -11.953 deg  omega=   1.733 rad/s  speed=  2.132 m/s  mechE=  2.5452 J  P_elec= 0.0000 W  store= 0.224 J [############] Vcap= 0.67 V  GEN=off                  O ==|==                  
+R08 t=11.20s  angle=  25.390 deg  omega=   1.177 rad/s  speed=  1.449 m/s  mechE=  2.2649 J  P_elec= 0.0000 W  store= 0.224 J [############] Vcap= 0.67 V  GEN=off                    ==|==     O            
+R08 t=11.60s  angle=  32.567 deg  omega=  -0.609 rad/s  speed=  0.749 m/s  mechE=  2.2593 J  P_elec= 0.0000 W  store= 0.224 J [############] Vcap= 0.67 V  GEN=off                    ==|==       O          
+R08 t=12.00s  angle=   3.107 deg  omega=  -1.662 rad/s  speed=  2.045 m/s  mechE=  2.1088 J  P_elec= 0.0000 W  store= 0.224 J [############] Vcap= 0.67 V  GEN=off                    ==|O=                  
+------------------------------------------------------------------------------------------------------------------------
+summary: max_angle=68.54 deg, max_speed=3.903 m/s, mech_energy_range=2.1088..7.9890 J, harvested=0.2235 J, stored_final=0.2235 J, avg_power=0.01863 W, peak_power=0.97146 W, heat_loss=0.1370 J, generator_on=0.24 s, storage=full at 1.64 s, period=2.293 s, note=heavily loaded harvester
+
+====================================================================================================================================
+FINAL HARVESTER COMPARISON
+====================================================================================================================================
+round       g       L     damp  gen_load   engage     start     max_v   harvest_J      avg_W     peak_W    gen_s    period  note
+    1    9.81    1.25    0.025     0.045     20.0     45.00     2.643      0.3491    0.02909    0.12473     4.10     2.307  stable harvesting swing
+    2    9.49    1.52    0.018     0.051     18.8     62.17     3.875      0.4249    0.03541    0.20719     2.64     2.670  stable harvesting swing
+    3    9.06    1.25    0.012     0.199     20.1     47.72     2.631      1.1651    0.09709    0.54993     6.00     2.382  heavily loaded harvester
+    4    9.75    2.34    0.011     0.008     20.6     50.00     4.040      0.0404    0.00336    0.01441     3.24     3.220  stable harvesting swing
+    5    9.44    0.88    0.013     0.101      9.5     69.48     3.273      0.8493    0.07078    0.85909     1.18     2.076  stable harvesting swing
+    6    9.85    0.85    0.007     0.070     33.3     46.18     2.238      1.1652    0.09710    0.30049     8.62     1.897  stable harvesting swing
+    7   11.59    0.51    0.029     0.092     23.9     54.46     2.214      2.6383    0.21986    1.05160     4.74     1.372  stable harvesting swing
+    8   10.23    1.23    0.025     0.156     22.7     68.54     3.903      0.2235    0.01863    0.97146     0.24     2.293  heavily loaded harvester
+
+Best energy harvest:
+  Round 7: harvested 2.6383 J, average 0.21986 W, peak 1.05160 W, generator active 4.74 s.
+  Interpretation: higher harvest means the generator extracted more pendulum energy, not free energy.
