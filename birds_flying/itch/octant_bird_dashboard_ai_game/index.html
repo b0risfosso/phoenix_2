@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Octant Bird Dashboard: AI Flight Pattern Lab</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root{
+    --bg:#eef8ff;
+    --panel:#ffffffea;
+    --ink:#101622;
+    --muted:#607085;
+    --line:#d7e3ef;
+    --blue:#2468ff;
+    --green:#27a35a;
+    --red:#d44038;
+    --gold:#d79b13;
+    --purple:#8c40d8;
+  }
+  html,body{
+    margin:0;
+    padding:0;
+    height:100%;
+    overflow:hidden;
+    background:radial-gradient(circle at 50% 35%, #ffffff 0%, var(--bg) 58%, #d6ecff 100%);
+    color:var(--ink);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  }
+  #game{
+    display:block;
+    width:100vw;
+    height:100vh;
+  }
+  .panel{
+    position:fixed;
+    background:var(--panel);
+    border:1px solid var(--line);
+    box-shadow:0 8px 24px #5e789933;
+    border-radius:12px;
+    padding:12px 14px;
+    backdrop-filter: blur(6px);
+    user-select:none;
+  }
+  #hud{
+    left:14px;
+    top:14px;
+    width:min(490px, calc(100vw - 42px));
+    line-height:1.32;
+    font-size:12px;
+  }
+  #dashboard{
+    right:14px;
+    top:14px;
+    width:355px;
+    max-height:calc(100vh - 42px);
+    overflow:auto;
+    font-size:12px;
+    line-height:1.25;
+  }
+  #roundText{
+    left:14px;
+    bottom:14px;
+    width:min(720px, calc(100vw - 42px));
+    font-size:12px;
+    line-height:1.35;
+  }
+  h3{
+    margin:0 0 8px 0;
+    font-size:15px;
+  }
+  .row{
+    display:grid;
+    grid-template-columns: 142px 1fr 48px;
+    align-items:center;
+    gap:8px;
+    margin:6px 0;
+  }
+  .row label{color:#243041}
+  input[type="range"]{width:100%}
+  select{
+    width:100%;
+    border:1px solid #b8c7d8;
+    border-radius:8px;
+    padding:6px;
+    background:#fff;
+    font-family:inherit;
+    font-size:12px;
+  }
+  button{
+    font-family:inherit;
+    border:1px solid #b8c7d8;
+    background:#fff;
+    border-radius:8px;
+    padding:7px 8px;
+    margin:2px;
+    cursor:pointer;
+  }
+  button:hover{background:#eef6ff}
+  button.primary{
+    background:#2468ff;
+    color:white;
+    border-color:#1f58d3;
+    font-weight:bold;
+  }
+  button.primary:hover{background:#1f58d3}
+  .buttonGrid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:6px;
+    margin:8px 0;
+  }
+  .smallGrid{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:4px;
+  }
+  .bar{
+    display:inline-block;
+    height:10px;
+    width:150px;
+    background:#e4edf6;
+    border:1px solid #cbd9e8;
+    border-radius:999px;
+    vertical-align:middle;
+    overflow:hidden;
+  }
+  .fill{
+    height:100%;
+    width:100%;
+    background:linear-gradient(90deg, #d84332, #d9a32b, #25a65a);
+    transform-origin:left center;
+  }
+  .muted{color:var(--muted)}
+  .blue{color:var(--blue)}
+  .green{color:var(--green)}
+  .red{color:var(--red)}
+  .gold{color:var(--gold)}
+  .purple{color:var(--purple)}
+  .section{
+    border-top:1px solid #e1ebf5;
+    margin-top:10px;
+    padding-top:10px;
+  }
+  #titleScreen{
+    position:fixed;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:linear-gradient(180deg, #f8fcff 0%, #dcedff 100%);
+    z-index:10;
+  }
+  #titleCard{
+    width:min(760px, calc(100vw - 40px));
+    background:#ffffffee;
+    border:1px solid #d5e4f2;
+    border-radius:18px;
+    box-shadow:0 16px 50px #56739a44;
+    padding:28px;
+    line-height:1.45;
+  }
+  #titleCard h1{margin:0 0 8px;font-size:30px}
+  #titleCard p{margin:8px 0}
+  #titleCard .start{
+    font-size:15px;
+    padding:10px 14px;
+    margin-top:14px;
+  }
+  @media(max-width:1000px){
+    #dashboard{
+      width:320px;
+      font-size:11px;
+    }
+    #hud{font-size:11px}
+    #roundText{font-size:10px}
+  }
+</style>
+</head>
+<body>
+<canvas id="game"></canvas>
+
+<div id="hud" class="panel"></div>
+
+<div id="dashboard" class="panel">
+  <h3>Flight Pattern Dashboard</h3>
+  <div class="row" style="grid-template-columns: 118px 1fr;">
+    <label>Preset</label>
+    <select id="preset"></select>
+  </div>
+
+  <div class="buttonGrid">
+    <button class="primary" id="playBtn">Play Round</button>
+    <button id="aiBtn">AI Autoplay Off</button>
+    <button id="pauseBtn">Pause</button>
+    <button id="stopBtn">Stop</button>
+    <button id="resetBtn">Reset Bird</button>
+    <button id="nextPresetBtn">Next Preset</button>
+  </div>
+
+  <div class="smallGrid">
+    <button id="trailBtn">Trail On</button>
+    <button id="targetBtn">Target On</button>
+    <button id="labelBtn">Labels On</button>
+  </div>
+
+  <div class="section">
+    <b>Round duration</b>
+    <div class="row"><label>Round steps</label><input id="roundSteps" type="range" min="240" max="1200" step="60"><span id="roundStepsVal"></span></div>
+    <div class="row"><label>Sim speed</label><input id="simSpeed" type="range" min="1" max="8" step="1"><span id="simSpeedVal"></span></div>
+  </div>
+
+  <div class="section">
+    <b>Movement forces</b>
+    <div class="row"><label>Max speed</label><input id="maxSpeed" type="range" min="6" max="36" step="0.5"><span id="maxSpeedVal"></span></div>
+    <div class="row"><label>Steering</label><input id="control" type="range" min="0.02" max="0.45" step="0.005"><span id="controlVal"></span></div>
+    <div class="row"><label>Wander</label><input id="wander" type="range" min="0" max="2.6" step="0.05"><span id="wanderVal"></span></div>
+    <div class="row"><label>Turn rate</label><input id="turn" type="range" min="0.1" max="2.8" step="0.05"><span id="turnVal"></span></div>
+    <div class="row"><label>Chaos</label><input id="chaos" type="range" min="0" max="0.7" step="0.01"><span id="chaosVal"></span></div>
+  </div>
+
+  <div class="section">
+    <b>Target behavior</b>
+    <div class="row"><label>Hit radius</label><input id="hit" type="range" min="5" max="55" step="1"><span id="hitVal"></span></div>
+    <div class="row"><label>Retarget time</label><input id="timeout" type="range" min="8" max="80" step="1"><span id="timeoutVal"></span></div>
+    <div class="row"><label>Axis bonus</label><input id="axisBonus" type="range" min="0" max="2.2" step="0.05"><span id="axisBonusVal"></span></div>
+    <div class="row"><label>Coverage pull</label><input id="coverageBonus" type="range" min="0" max="2.0" step="0.05"><span id="coverageBonusVal"></span></div>
+    <div class="row"><label>Radial limit</label><input id="limit" type="range" min="70" max="260" step="5"><span id="limitVal"></span></div>
+  </div>
+
+  <div class="section">
+    <b>Energy and world</b>
+    <div class="row"><label>Energy saving</label><input id="energySaving" type="range" min="0" max="1.8" step="0.05"><span id="energySavingVal"></span></div>
+    <div class="row"><label>Wind X</label><input id="windX" type="range" min="-2" max="2" step="0.05"><span id="windXVal"></span></div>
+    <div class="row"><label>Wind Y</label><input id="windY" type="range" min="-2" max="2" step="0.05"><span id="windYVal"></span></div>
+    <div class="row"><label>Wind Z</label><input id="windZ" type="range" min="-2" max="2" step="0.05"><span id="windZVal"></span></div>
+    <div class="row"><label>Zoom</label><input id="zoom" type="range" min="0.8" max="4.8" step="0.05"><span id="zoomVal"></span></div>
+  </div>
+
+  <div class="section">
+    <b>Round result</b><br>
+    <span class="muted">Play a round to evaluate the selected parameters.</span>
+    <div id="resultBox" style="margin-top:6px;"></div>
+  </div>
+</div>
+
+<div id="roundText" class="panel"></div>
+
+<div id="titleScreen">
+  <div id="titleCard">
+    <h1>Octant Bird Dashboard: AI Flight Pattern Lab</h1>
+    <p>
+      Tune the parameters that determine the bird’s flight pattern, then press <b>Play Round</b>.
+      The bird explores a centered 3D coordinate system through octants, axes, loops, spirals, and target switches.
+    </p>
+    <p class="muted">
+      The dashboard controls the simulation rules. Optional AI autoplay runs longer rounds and tunes the next round from the previous result.
+    </p>
+    <button class="start" onclick="startGame()">Open Dashboard</button>
+  </div>
+</div>
+
+<script>
+(() => {
+"use strict";
+
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+const hud = document.getElementById("hud");
+const roundText = document.getElementById("roundText");
+const titleScreen = document.getElementById("titleScreen");
+const resultBox = document.getElementById("resultBox");
+
+let W = 0, H = 0;
+function resize(){
+  W = canvas.width = Math.floor(window.innerWidth * devicePixelRatio);
+  H = canvas.height = Math.floor(window.innerHeight * devicePixelRatio);
+  canvas.style.width = window.innerWidth + "px";
+  canvas.style.height = window.innerHeight + "px";
+  ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+}
+window.addEventListener("resize", resize);
+resize();
+
+const V = {
+  add:(a,b)=>({x:a.x+b.x,y:a.y+b.y,z:a.z+b.z}),
+  sub:(a,b)=>({x:a.x-b.x,y:a.y-b.y,z:a.z-b.z}),
+  mul:(a,s)=>({x:a.x*s,y:a.y*s,z:a.z*s}),
+  dot:(a,b)=>a.x*b.x+a.y*b.y+a.z*b.z,
+  mag:(a)=>Math.hypot(a.x,a.y,a.z),
+  unit:(a)=>{
+    const m=Math.hypot(a.x,a.y,a.z);
+    return m>1e-9?{x:a.x/m,y:a.y/m,z:a.z/m}:{x:1,y:0,z:0};
+  },
+  clone:(a)=>({x:a.x,y:a.y,z:a.z})
+};
+const clamp = (x,a,b)=>Math.max(a,Math.min(b,x));
+const fmt = v => `(${v.x>=0?"+":""}${v.x.toFixed(1)}, ${v.y>=0?"+":""}${v.y.toFixed(1)}, ${v.z>=0?"+":""}${v.z.toFixed(1)})`;
+
+const O = [
+  {name:"O1(+,+,+)", p:{x: 92,y: 92,z: 92}},
+  {name:"O2(-,+,+)", p:{x:-92,y: 92,z: 92}},
+  {name:"O3(-,-,+)", p:{x:-92,y:-92,z: 92}},
+  {name:"O4(+,-,+)", p:{x: 92,y:-92,z: 92}},
+  {name:"O5(+,+,-)", p:{x: 92,y: 92,z:-92}},
+  {name:"O6(-,+,-)", p:{x:-92,y: 92,z:-92}},
+  {name:"O7(-,-,-)", p:{x:-92,y:-92,z:-92}},
+  {name:"O8(+,-,-)", p:{x: 92,y:-92,z:-92}}
+];
+const ORIGIN = {x:0,y:0,z:0};
+
+function octantName(p){
+  const sx = p.x >= 0 ? "+" : "-";
+  const sy = p.y >= 0 ? "+" : "-";
+  const sz = p.z >= 0 ? "+" : "-";
+  const map = {
+    "+++":"O1(+,+,+)", "-++":"O2(-,+,+)", "--+":"O3(-,-,+)", "+-+":"O4(+,-,+)",
+    "++-":"O5(+,+,-)", "-+-":"O6(-,+,-)", "---":"O7(-,-,-)", "+--":"O8(+,-,-)"
+  };
+  return map[sx+sy+sz];
+}
+function octantShort(p){
+  return `${p.x>=0?"+":"-"}${p.y>=0?"+":"-"}${p.z>=0?"+":"-"}`;
+}
+
+const targetSets = {
+  all: O.map(o=>o.p),
+  originSurvey: [O[0].p,ORIGIN,O[6].p,ORIGIN,O[1].p,ORIGIN,O[7].p,ORIGIN,O[2].p,ORIGIN,O[4].p,ORIGIN,O[3].p,ORIGIN,O[5].p],
+  opposites: [O[0].p,O[6].p,O[1].p,O[7].p,O[2].p,O[4].p,O[3].p,O[5].p,O[0].p],
+  chaotic: [O[5].p,O[3].p,O[2].p,O[4].p,O[1].p,O[7].p,O[6].p,O[0].p,O[3].p,O[5].p],
+  mixed: [O[0].p,O[2].p,ORIGIN,O[5].p,O[3].p,ORIGIN,O[6].p,O[4].p,O[1].p,O[7].p,ORIGIN]
+};
+
+const presets = [
+  {
+    key:"direct_octant_chain",
+    label:"Direct octant chain",
+    desc:"Direct target-to-target movement through octants.",
+    pattern:"direct",
+    targetSet:"all",
+    maxSpeed:24, control:0.240, wander:0.40, chaos:0.04, turn:0.45, hit:22, timeout:34, axisBonus:0.75, coverageBonus:0.55, limit:170, energySaving:0.80, windX:0.15, windY:-0.05, windZ:0.05, roundSteps:720, simSpeed:3, zoom:2.05
+  },
+  {
+    key:"axis_cross_survey",
+    label:"Axis-cross survey",
+    desc:"Alternates origin-like targets with octant targets to force sign changes.",
+    pattern:"direct",
+    targetSet:"originSurvey",
+    maxSpeed:23, control:0.260, wander:0.55, chaos:0.05, turn:0.65, hit:24, timeout:28, axisBonus:0.90, coverageBonus:0.55, limit:170, energySaving:0.85, windX:0.05, windY:0.10, windZ:-0.05, roundSteps:720, simSpeed:3, zoom:2.05
+  },
+  {
+    key:"large_looping_orbit",
+    label:"Large looping orbit",
+    desc:"Moving target orbits around origin while z oscillates.",
+    pattern:"orbit",
+    targetSet:"all",
+    maxSpeed:22, control:0.210, wander:1.15, chaos:0.05, turn:1.35, hit:28, timeout:24, axisBonus:0.75, coverageBonus:0.55, limit:175, energySaving:1.00, windX:0.05, windY:0.15, windZ:0, roundSteps:780, simSpeed:3, zoom:2.05
+  },
+  {
+    key:"diagonal_opposites",
+    label:"Diagonal opposites",
+    desc:"Strong diagonal transfers between opposite octants.",
+    pattern:"direct",
+    targetSet:"opposites",
+    maxSpeed:25, control:0.270, wander:0.60, chaos:0.07, turn:0.70, hit:24, timeout:30, axisBonus:0.95, coverageBonus:0.55, limit:180, energySaving:0.75, windX:0.10, windY:-0.15, windZ:0.10, roundSteps:720, simSpeed:3, zoom:2.05
+  },
+  {
+    key:"spiral_octant_expansion",
+    label:"Spiral expansion",
+    desc:"Expanding spiral that can sweep through all octants.",
+    pattern:"spiral",
+    targetSet:"all",
+    maxSpeed:23, control:0.220, wander:1.30, chaos:0.06, turn:1.55, hit:28, timeout:26, axisBonus:0.80, coverageBonus:0.55, limit:185, energySaving:0.95, windX:-0.10, windY:0.10, windZ:0.05, roundSteps:840, simSpeed:3, zoom:2.05
+  },
+  {
+    key:"chaotic_octant_hunt",
+    label:"Chaotic octant hunt",
+    desc:"Unpredictable target jumps with strong correction and high curvature.",
+    pattern:"direct",
+    targetSet:"chaotic",
+    maxSpeed:25, control:0.280, wander:1.05, chaos:0.20, turn:1.10, hit:24, timeout:24, axisBonus:1.05, coverageBonus:0.70, limit:180, energySaving:0.70, windX:0.10, windY:-0.20, windZ:0, roundSteps:720, simSpeed:3, zoom:2.05
+  },
+  {
+    key:"figure_eight_all_axes",
+    label:"Figure-eight all axes",
+    desc:"A 3D figure-eight pattern crossing x, y, and z repeatedly.",
+    pattern:"figure8",
+    targetSet:"all",
+    maxSpeed:22.5, control:0.225, wander:1.20, chaos:0.04, turn:1.60, hit:28, timeout:26, axisBonus:0.75, coverageBonus:0.55, limit:170, energySaving:1.05, windX:0, windY:0.10, windZ:-0.05, roundSteps:840, simSpeed:3, zoom:2.05
+  },
+  {
+    key:"full_coverage_mixed",
+    label:"Full coverage mixed",
+    desc:"Mixed direct moves, loops, origin dives, and diagonal cuts.",
+    pattern:"direct",
+    targetSet:"mixed",
+    maxSpeed:24, control:0.255, wander:1.00, chaos:0.10, turn:1.20, hit:25, timeout:25, axisBonus:0.85, coverageBonus:0.75, limit:185, energySaving:0.90, windX:0.05, windY:-0.05, windZ:0.05, roundSteps:780, simSpeed:3, zoom:2.05
+  }
+];
+
+const ids = ["roundSteps","simSpeed","maxSpeed","control","wander","turn","chaos","hit","timeout","axisBonus","coverageBonus","limit","energySaving","windX","windY","windZ","zoom"];
+const presetEl = document.getElementById("preset");
+
+for(const p of presets){
+  const opt=document.createElement("option");
+  opt.value=p.key;
+  opt.textContent=p.label;
+  presetEl.appendChild(opt);
+}
+
+function uiVal(id){ return parseFloat(document.getElementById(id).value); }
+function setUiFromPreset(p){
+  for(const id of ids){
+    document.getElementById(id).value = p[id];
+  }
+  updateValueLabels();
+}
+function updateValueLabels(){
+  for(const id of ids){
+    const val=uiVal(id);
+    document.getElementById(id+"Val").textContent = Number.isInteger(val) ? String(val) : val.toFixed(2);
+  }
+}
+for(const id of ids){
+  document.getElementById(id).addEventListener("input", updateValueLabels);
+}
+presetEl.addEventListener("change", ()=>{
+  const p=presets.find(x=>x.key===presetEl.value);
+  setUiFromPreset(p);
+});
+
+let activePreset = presets[0];
+setUiFromPreset(activePreset);
+
+function dashboardParams(){
+  const preset=presets.find(x=>x.key===presetEl.value);
+  return {
+    ...preset,
+    maxSpeed:uiVal("maxSpeed"),
+    control:uiVal("control"),
+    wander:uiVal("wander"),
+    turn:uiVal("turn"),
+    chaos:uiVal("chaos"),
+    hit:uiVal("hit"),
+    timeout:uiVal("timeout"),
+    axisBonus:uiVal("axisBonus"),
+    coverageBonus:uiVal("coverageBonus"),
+    limit:uiVal("limit"),
+    energySaving:uiVal("energySaving"),
+    windX:uiVal("windX"),
+    windY:uiVal("windY"),
+    windZ:uiVal("windZ"),
+    zoom:uiVal("zoom"),
+    targets:targetSets[preset.targetSet]
+  };
+}
+
+let state, params, step = 0, playing = false, paused = false, started = false;
+let aiAutoplay = false;
+let aiGeneration = 0;
+let lastRoundResult = null;
+let trailOn = true, targetOn = true, labelsOn = true;
+let trail = [];
+let lastTarget = {x:92,y:92,z:92};
+
+function resetBird(){
+  state = {
+    pos:{x:0,y:0,z:0},
+    vel:{x:10,y:7.5,z:5},
+    acc:{x:0,y:0,z:0},
+    energy:96,
+    mode:"waiting",
+    targetIndex:0,
+    targetAge:0,
+    targetHits:0,
+    timeouts:0,
+    distance:0,
+    curvature:0,
+    lastDir:{x:1,y:0,z:0},
+    transitions:0,
+    octants:{[octantName({x:0,y:0,z:0})]:1},
+    axes:{x:0,y:0,z:0},
+    loops:0,
+    originPasses:0,
+    maxRadius:0,
+    bank:0, pitch:0, heading:0,
+    lastEvent:"ready"
+  };
+  step = 0;
+  trail = [];
+  lastTarget = {x:92,y:92,z:92};
+}
+
+function playRound(){
+  params = dashboardParams();
+  resetBird();
+  playing = true;
+  paused = false;
+  resultBox.innerHTML = "<span class='blue'>Round running...</span>";
+}
+
+function stopRound(){
+  playing = false;
+  paused = false;
+  state.mode = "stopped";
+  writeResult("Stopped before completion.");
+}
+
+function togglePause(){
+  paused = !paused;
+}
+
+function writeResult(prefix="Round complete."){
+  const axes=state.axes.x+state.axes.y+state.axes.z;
+  resultBox.innerHTML = `
+    <b>${prefix}</b><br>
+    Octants: <span class="green">${Object.keys(state.octants).length}/8</span><br>
+    Transitions: ${state.transitions}<br>
+    Axis crossings: ${axes}<br>
+    Target hits: ${state.targetHits}<br>
+    Timeouts: ${state.timeouts}<br>
+    Energy: ${state.energy.toFixed(1)}%<br>
+    Distance: ${state.distance.toFixed(1)}
+  `;
+}
+
+
+function currentResult(){
+  return {
+    preset: params ? params.key : presetEl.value,
+    octants: Object.keys(state.octants).length,
+    transitions: state.transitions,
+    axes: state.axes.x + state.axes.y + state.axes.z,
+    targets: state.targetHits,
+    timeouts: state.timeouts,
+    energy: state.energy,
+    distance: state.distance,
+    curvature: state.curvature,
+    loops: state.loops,
+    originPasses: state.originPasses
+  };
+}
+
+function setControlValue(id, value){
+  const el = document.getElementById(id);
+  const min = parseFloat(el.min);
+  const max = parseFloat(el.max);
+  const step = parseFloat(el.step || "1");
+  let v = Math.max(min, Math.min(max, value));
+  if(step > 0){
+    v = Math.round(v / step) * step;
+  }
+  el.value = v;
+}
+
+function aiTuneFromResult(result){
+  aiGeneration += 1;
+
+  // Coverage is primary. If the bird did not visit many octants, strengthen steering,
+  // axis crossing, coverage pull, and round duration.
+  if(result.octants < 6){
+    setControlValue("control", uiVal("control") + 0.025);
+    setControlValue("axisBonus", uiVal("axisBonus") + 0.12);
+    setControlValue("coverageBonus", uiVal("coverageBonus") + 0.10);
+    setControlValue("roundSteps", uiVal("roundSteps") + 120);
+  }
+
+  // If motion is too direct, increase wander/turn/chaos.
+  if(result.curvature < 1.2 || result.loops < 2){
+    setControlValue("wander", uiVal("wander") + 0.10);
+    setControlValue("turn", uiVal("turn") + 0.08);
+    setControlValue("chaos", uiVal("chaos") + 0.015);
+  }
+
+  // If energy is too low, reduce speed/chaos and increase energy saving.
+  if(result.energy < 45){
+    setControlValue("maxSpeed", uiVal("maxSpeed") - 1.0);
+    setControlValue("chaos", uiVal("chaos") - 0.03);
+    setControlValue("energySaving", uiVal("energySaving") + 0.12);
+  }
+
+  // If targets are never hit, increase hit radius and slightly reduce timeout.
+  if(result.targets < 2){
+    setControlValue("hit", uiVal("hit") + 3);
+    setControlValue("timeout", uiVal("timeout") - 2);
+  }
+
+  // If timeouts dominate but coverage is good, move to a new preset to test another behavior.
+  if(result.octants >= 7 && result.axes >= 8){
+    const nextIndex = (presetEl.selectedIndex + 1) % presetEl.options.length;
+    presetEl.selectedIndex = nextIndex;
+    const p = presets.find(x => x.key === presetEl.value);
+    setUiFromPreset(p);
+    setControlValue("roundSteps", Math.max(720, uiVal("roundSteps")));
+  }
+
+  updateValueLabels();
+}
+
+function completeRound(){
+  playing = false;
+  lastRoundResult = currentResult();
+  writeResult("Round complete.");
+
+  if(aiAutoplay){
+    aiTuneFromResult(lastRoundResult);
+    params = dashboardParams();
+    resetBird();
+    playing = true;
+    paused = false;
+    resultBox.innerHTML += `<br><span class="purple">AI autoplay generation ${aiGeneration}: parameters tuned; next round running.</span>`;
+  }
+}
+
+function toggleAI(){
+  aiAutoplay = !aiAutoplay;
+  document.getElementById("aiBtn").textContent = aiAutoplay ? "AI Autoplay On" : "AI Autoplay Off";
+  if(aiAutoplay && !playing){
+    playRound();
+  }
+}
+
+function nextPreset(){
+  presetEl.selectedIndex = (presetEl.selectedIndex + 1) % presetEl.options.length;
+  const p = presets.find(x=>x.key===presetEl.value);
+  setUiFromPreset(p);
+}
+
+window.startGame = function(){
+  started = true;
+  titleScreen.style.display = "none";
+  params = dashboardParams();
+  resetBird();
+};
+
+document.getElementById("playBtn").onclick = playRound;
+document.getElementById("aiBtn").onclick = toggleAI;
+document.getElementById("pauseBtn").onclick = togglePause;
+document.getElementById("stopBtn").onclick = stopRound;
+document.getElementById("nextPresetBtn").onclick = nextPreset;
+document.getElementById("resetBtn").onclick = () => { playing=false; resetBird(); writeResult("Bird reset."); };
+document.getElementById("trailBtn").onclick = () => {
+  trailOn=!trailOn;
+  document.getElementById("trailBtn").textContent = trailOn ? "Trail On" : "Trail Off";
+};
+document.getElementById("targetBtn").onclick = () => {
+  targetOn=!targetOn;
+  document.getElementById("targetBtn").textContent = targetOn ? "Target On" : "Target Off";
+};
+document.getElementById("labelBtn").onclick = () => {
+  labelsOn=!labelsOn;
+  document.getElementById("labelBtn").textContent = labelsOn ? "Labels On" : "Labels Off";
+};
+
+function proceduralTarget(p, st, n, base){
+  const t = n * 0.10;
+  if(p.pattern === "orbit"){
+    const r = 112;
+    return {x:r*Math.cos(t*0.62), y:r*Math.sin(t*0.62), z:95*Math.sin(t*0.31)};
+  }
+  if(p.pattern === "spiral"){
+    const r = Math.min(150, 22 + n*0.65);
+    return {x:r*Math.cos(t*0.78), y:r*Math.sin(t*0.78), z:r*0.78*Math.sin(t*0.43)};
+  }
+  if(p.pattern === "figure8"){
+    const a = 105;
+    return {x:a*Math.sin(t*0.62), y:a*Math.sin(t*0.62)*Math.cos(t*0.62), z:95*Math.sin(t*1.24)};
+  }
+  return {
+    x:base.x + 10*Math.sin(t*p.turn),
+    y:base.y + 10*Math.cos(t*p.turn*1.2),
+    z:base.z + 10*Math.sin(t*p.turn*1.4 + 0.5)
+  };
+}
+
+function windAt(p, n){
+  const t=n*0.1;
+  return {
+    x:p.windX + 0.18*Math.sin(t),
+    y:p.windY + 0.18*Math.cos(t*0.8),
+    z:p.windZ + 0.14*Math.sin(t*0.6)
+  };
+}
+
+function lateralWander(st, p, n){
+  const t=n*0.1;
+  const f=V.unit(st.vel);
+  const sideA=V.unit({x:-f.y,y:f.x,z:0});
+  const sideB=V.unit({x:-f.z,y:0,z:f.x});
+  const signalA = Math.sin(t*p.turn*1.7) + 0.45*Math.cos(t*0.9);
+  const signalB = Math.cos(t*p.turn*1.3 + 0.8) + 0.35*Math.sin(t*1.4);
+  const e = 0.40 + 0.60*(st.energy/100);
+  return V.mul(V.add(V.mul(sideA,signalA),V.mul(sideB,signalB)), p.wander*e);
+}
+
+function axisBonusForce(st,target,p){
+  let b={x:0,y:0,z:0};
+  const a=p.axisBonus;
+  if(st.pos.x*target.x<0) b.x += st.pos.x>0 ? -a : a;
+  if(st.pos.y*target.y<0) b.y += st.pos.y>0 ? -a : a;
+  if(st.pos.z*target.z<0) b.z += st.pos.z>0 ? -a : a;
+  if(V.mag(target)<1 && V.mag(st.pos)>2) b = V.add(b,V.mul(V.unit(st.pos),-a));
+  return b;
+}
+function coverageBonusForce(st,p){
+  if(Object.keys(st.octants).length >= 6) return {x:0,y:0,z:0};
+  const unvisited = O.filter(o=>!st.octants[octantName(o.p)]);
+  if(!unvisited.length) return {x:0,y:0,z:0};
+  let far = unvisited[0].p, farD=-1;
+  for(const o of unvisited){
+    const d=V.mag(V.sub(st.pos,o.p));
+    if(d>farD){farD=d; far=o.p;}
+  }
+  return V.mul(V.unit(V.sub(far,st.pos)), p.coverageBonus);
+}
+
+function classify(p, st, target, event){
+  if(event==="target_hit_advance") return "target_pass";
+  if(event==="timeout_advance") return "retarget";
+  if(st.energy<22) return "energy_saving_wander";
+  if(V.mag(target)<1) return "origin_dive";
+  if(p.pattern==="orbit") return "large_looping_orbit";
+  if(p.pattern==="figure8") return "figure_eight_axis_cross";
+  if(p.pattern==="spiral") return "spiral_axis_sweep";
+  if(p.key==="chaotic_octant_hunt") return "chaotic_octant_hunt";
+  if(p.key==="diagonal_opposites") return "diagonal_opposite_cut";
+  if(p.key==="axis_cross_survey") return "axis_crossing_survey";
+  if(p.key==="full_coverage_mixed") return "mixed_coverage_wander";
+  return "direct_octant_move";
+}
+
+function simStep(){
+  step++;
+  const base = params.targets[state.targetIndex % params.targets.length];
+  let target = proceduralTarget(params, state, step, base);
+  lastTarget = target;
+
+  state.targetAge++;
+  let event="tracking";
+  if(V.mag(V.sub(state.pos,target)) <= params.hit){
+    state.targetHits++;
+    state.targetIndex = (state.targetIndex+1)%params.targets.length;
+    state.targetAge = 0;
+    event="target_hit_advance";
+  } else if(state.targetAge >= params.timeout){
+    state.timeouts++;
+    state.targetIndex = (state.targetIndex+1)%params.targets.length;
+    state.targetAge = 0;
+    event="timeout_advance";
+  }
+
+  target = proceduralTarget(params, state, step, params.targets[state.targetIndex % params.targets.length]);
+  lastTarget = target;
+
+  const wind = windAt(params, step);
+  const toTarget=V.sub(target,state.pos);
+  const d=V.mag(toTarget);
+  const desiredDir=V.unit(toTarget);
+  const approach=clamp(d/55,0.45,1);
+  const eScale=0.40+0.60*(state.energy/100);
+  const desiredVel=V.mul(desiredDir, params.maxSpeed*approach*eScale);
+  const steering=V.mul(V.sub(desiredVel,state.vel), params.control);
+  const chaos={
+    x:Math.sin(step*0.37)*params.chaos,
+    y:Math.cos(step*0.29)*params.chaos,
+    z:Math.sin(step*0.23+1.2)*params.chaos
+  };
+  const rel=V.sub(state.vel, wind);
+  const drag=V.mul(rel, -0.018*V.mag(rel));
+  const thrust=V.mul(V.unit(state.vel), 0.55+0.45*state.energy/100);
+
+  let boundary={x:0,y:0,z:0};
+  const r=V.mag(state.pos);
+  if(r>params.limit) boundary=V.mul(V.unit(state.pos), -(r-params.limit)*0.22);
+
+  const total = [
+    steering,
+    lateralWander(state,params,step),
+    axisBonusForce(state,target,params),
+    coverageBonusForce(state,params),
+    chaos,
+    boundary,
+    drag,
+    thrust
+  ].reduce((a,b)=>V.add(a,b),{x:0,y:0,z:0});
+
+  state.acc=total;
+  state.vel=V.add(state.vel,V.mul(state.acc,0.10));
+  const maxSpeed=params.maxSpeed*(0.58+0.42*state.energy/100);
+  if(V.mag(state.vel)>maxSpeed) state.vel=V.mul(V.unit(state.vel),maxSpeed);
+
+  const old=V.clone(state.pos);
+  const oldOct=octantName(old);
+  const oldDir=state.lastDir;
+  state.pos=V.add(state.pos,V.mul(state.vel,0.10));
+  state.distance += V.mag(V.sub(state.pos,old));
+
+  const newOct=octantName(state.pos);
+  state.octants[newOct]=(state.octants[newOct]||0)+1;
+  if(newOct!==oldOct) state.transitions++;
+
+  if(old.x*state.pos.x<0) state.axes.x++;
+  if(old.y*state.pos.y<0) state.axes.y++;
+  if(old.z*state.pos.z<0) state.axes.z++;
+
+  const newDir=V.unit(state.vel);
+  const turnAmount=1-clamp(V.dot(oldDir,newDir),-1,1);
+  state.curvature += turnAmount;
+  state.lastDir=newDir;
+  if(V.mag(state.pos)<10 && V.mag(old)>=10) state.originPasses++;
+  if(state.curvature > (state.loops+1)*0.85) state.loops++;
+  state.maxRadius=Math.max(state.maxRadius,V.mag(state.pos));
+
+  state.mode=classify(params,state,target,event);
+  const horiz=Math.max(Math.hypot(state.vel.x,state.vel.y),1e-9);
+  state.heading=Math.atan2(state.vel.y,state.vel.x)*180/Math.PI;
+  state.pitch=Math.atan2(state.vel.z,horiz)*180/Math.PI;
+  state.bank=clamp(-state.vel.y*1.6 + state.acc.y*3.2, -70, 70);
+
+  let cost=0.020 + V.mag(state.vel)*0.0025 + Math.abs(state.bank)*0.001 + V.mag(state.acc)*0.0035;
+  if(["large_looping_orbit","figure_eight_axis_cross","spiral_axis_sweep","mixed_coverage_wander"].includes(state.mode)) cost*=0.72;
+  if(["target_pass","origin_dive","energy_saving_wander"].includes(state.mode)) cost*=0.55;
+  if(V.dot(state.pos,state.vel)<0) cost -= 0.020*params.energySaving;
+  state.energy=clamp(state.energy-cost,0,100);
+  state.lastEvent = event==="tracking" ? "steady" : event;
+
+  if(trailOn){
+    trail.push(V.clone(state.pos));
+    if(trail.length>900) trail.shift();
+  } else {
+    trail.length=0;
+  }
+
+  if(step>=params.roundSteps){
+    completeRound();
+  }
+}
+
+function project(p){
+  const zoom = uiVal("zoom");
+  const a = -0.72, b = 0.62;
+  const ca=Math.cos(a), sa=Math.sin(a);
+  const cb=Math.cos(b), sb=Math.sin(b);
+
+  let x = p.x*ca - p.y*sa;
+  let y = p.x*sa + p.y*ca;
+  let z = p.z;
+
+  let y2 = y*cb - z*sb;
+  let z2 = y*sb + z*cb;
+
+  const scale = zoom * (1 + z2/900);
+  return {
+    x: window.innerWidth/2 + x*scale,
+    y: window.innerHeight/2 - y2*scale,
+    depth:z2
+  };
+}
+
+function drawLine3(a,b,color,width=1,alpha=1){
+  const pa=project(a), pb=project(b);
+  ctx.globalAlpha=alpha;
+  ctx.strokeStyle=color;
+  ctx.lineWidth=width;
+  ctx.beginPath();
+  ctx.moveTo(pa.x,pa.y);
+  ctx.lineTo(pb.x,pb.y);
+  ctx.stroke();
+  ctx.globalAlpha=1;
+}
+
+function drawText3(p,text,color="#233",size=12){
+  const pp=project(p);
+  ctx.fillStyle=color;
+  ctx.font=`${size}px ui-monospace, monospace`;
+  ctx.textAlign="center";
+  const lines = String(text).split("\n");
+  lines.forEach((line,i)=>ctx.fillText(line,pp.x,pp.y+i*(size+2)));
+}
+
+function drawAxes(){
+  const L=165;
+  drawLine3({x:-L,y:0,z:0},{x:L,y:0,z:0},"#d44038",2);
+  drawLine3({x:0,y:-L,z:0},{x:0,y:L,z:0},"#27a35a",2);
+  drawLine3({x:0,y:0,z:-L},{x:0,y:0,z:L},"#2468ff",2);
+  drawText3({x:L+18,y:0,z:0},"+X","#b02d28",15);
+  drawText3({x:-L-18,y:0,z:0},"-X","#b02d28",15);
+  drawText3({x:0,y:L+18,z:0},"+Y","#168542",15);
+  drawText3({x:0,y:-L-18,z:0},"-Y","#168542",15);
+  drawText3({x:0,y:0,z:L+18},"+Z","#2054cc",15);
+  drawText3({x:0,y:0,z:-L-18},"-Z","#2054cc",15);
+
+  const C=120;
+  for(const x of [-C,C]){
+    for(const y of [-C,C]) drawLine3({x,y,z:-C},{x,y,z:C},"#9aa9b9",1,0.32);
+    for(const z of [-C,C]) drawLine3({x,y:-C,z},{x,y:C,z},"#9aa9b9",1,0.32);
+  }
+  for(const y of [-C,C]){
+    for(const z of [-C,C]) drawLine3({x:-C,y,z},{x:C,y,z},"#9aa9b9",1,0.32);
+  }
+
+  if(labelsOn){
+    for(let i=0;i<O.length;i++){
+      drawText3(V.mul(O[i].p,1.32),`O${i+1}\n${octantShort(O[i].p)}`,"#2c3440",12);
+    }
+  }
+}
+
+function modeColor(mode){
+  if(mode.includes("chaotic")) return "#d44038";
+  if(mode.includes("figure")) return "#8c40d8";
+  if(mode.includes("spiral") || mode.includes("loop")) return "#177cc6";
+  if(mode.includes("diagonal")) return "#d79b13";
+  if(mode.includes("origin")) return "#111";
+  if(mode.includes("target")) return "#27a35a";
+  if(mode.includes("retarget")) return "#e36a12";
+  return "#2468ff";
+}
+
+function drawTrail(){
+  if(trail.length<2) return;
+  for(let i=1;i<trail.length;i++){
+    const a=project(trail[i-1]), b=project(trail[i]);
+    const alpha=i/trail.length;
+    ctx.globalAlpha=0.08+alpha*0.55;
+    ctx.strokeStyle="#2458d8";
+    ctx.lineWidth=1+alpha*2.5;
+    ctx.beginPath();
+    ctx.moveTo(a.x,a.y);
+    ctx.lineTo(b.x,b.y);
+    ctx.stroke();
+  }
+  ctx.globalAlpha=1;
+}
+
+function drawTarget(target){
+  if(!targetOn) return;
+  const p=project(target);
+  ctx.save();
+  ctx.translate(p.x,p.y);
+  ctx.strokeStyle="#e36a12";
+  ctx.lineWidth=2;
+  ctx.beginPath(); ctx.arc(0,0,12,0,Math.PI*2); ctx.stroke();
+  ctx.beginPath(); ctx.arc(0,0,6,0,Math.PI*2); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(-16,0); ctx.lineTo(16,0); ctx.moveTo(0,-16); ctx.lineTo(0,16); ctx.stroke();
+  ctx.restore();
+  drawText3(V.add(target,{x:0,y:0,z:12}),"TARGET","#b64a08",11);
+}
+
+function drawBird(){
+  const p=project(state.pos);
+  const color=modeColor(state.mode);
+  const heading=Math.atan2(state.vel.y,state.vel.x);
+  const speed=V.mag(state.vel);
+  ctx.save();
+  ctx.translate(p.x,p.y);
+  ctx.rotate(heading*0.35);
+  ctx.fillStyle=color;
+  ctx.strokeStyle="#10203a";
+  ctx.lineWidth=1.5;
+
+  ctx.beginPath();
+  ctx.moveTo(18,0);
+  ctx.lineTo(-12,-7);
+  ctx.lineTo(-7,0);
+  ctx.lineTo(-12,7);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+
+  const flap = Math.sin(performance.now()/120)*8;
+  ctx.fillStyle="#1e4ed6";
+  ctx.beginPath();
+  ctx.moveTo(0,0);
+  ctx.lineTo(-24,-18-flap);
+  ctx.lineTo(-6,-4);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(0,0);
+  ctx.lineTo(-24,18+flap);
+  ctx.lineTo(-6,4);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.fillStyle="#e6a121";
+  ctx.beginPath();
+  ctx.moveTo(18,0);
+  ctx.lineTo(26,-4);
+  ctx.lineTo(26,4);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.restore();
+
+  ctx.fillStyle="#111827";
+  ctx.font="11px ui-monospace, monospace";
+  ctx.textAlign="center";
+  ctx.fillText(`${octantName(state.pos).split("(")[0]} ${state.mode}`, p.x, p.y-22);
+  ctx.fillText(`E ${state.energy.toFixed(1)}%  v ${speed.toFixed(1)}`, p.x, p.y-9);
+}
+
+function render(){
+  ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
+  drawAxes();
+  drawTrail();
+  drawTarget(lastTarget);
+  drawBird();
+
+  const visited=Object.keys(state.octants).map(x=>x.split("(")[0]).sort().join(" ");
+  hud.innerHTML = `
+    <b>Octant Bird Dashboard</b><br>
+    Preset: <b>${params.label}</b><br>
+    Status: <span class="gold">${playing ? (paused ? "paused" : "playing") : "ready"}</span> | Step ${step}/${params.roundSteps}<br>
+    Mode: <span class="purple">${state.mode}</span> | Event: <span class="gold">${state.lastEvent}</span><br>
+    Octant: <b>${octantName(state.pos)}</b> short=${octantShort(state.pos)}<br>
+    Position: ${fmt(state.pos)}<br>
+    Target: ${fmt(lastTarget)} <span class="muted">${octantName(lastTarget)}</span><br>
+    Energy: <span class="bar"><span class="fill" style="transform:scaleX(${state.energy/100})"></span></span> ${state.energy.toFixed(1)}%<br>
+    Target hits: <span class="green">${state.targetHits}</span> | Timeouts: ${state.timeouts}<br>
+    Octants visited: <span class="green">${Object.keys(state.octants).length}/8</span> | Transitions: ${state.transitions}<br>
+    Axis crossings x/y/z: ${state.axes.x}/${state.axes.y}/${state.axes.z}<br>
+    Loops: ${state.loops} | Origin passes: ${state.originPasses} | Curvature: ${state.curvature.toFixed(3)}
+  `;
+  roundText.innerHTML = `
+    <b>${params.label}</b>: ${params.desc}<br>
+    <span class="muted">Dashboard parameters determine the round. Press Play Round after tuning, or enable AI Autoplay.</span><br>
+    <span class="muted">Visited:</span> ${visited || "none"} |
+    <span class="muted">Distance:</span> ${state.distance.toFixed(1)} |
+    <span class="muted">Max radius:</span> ${state.maxRadius.toFixed(1)}
+  `;
+}
+
+function loop(){
+  requestAnimationFrame(loop);
+  if(!started || !state) return;
+  params = params || dashboardParams();
+  if(playing && !paused){
+    const substeps = Math.max(1, Math.floor(params.simSpeed || 1));
+    for(let i=0;i<substeps;i++){
+      if(playing) simStep();
+    }
+  }
+  render();
+}
+
+resetBird();
+params = dashboardParams();
+loop();
+
+})();
+</script>
+</body>
+</html>
