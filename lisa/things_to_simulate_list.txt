@@ -1,0 +1,102 @@
+Things to Simulate
+
+1. Birds flying
+2. Dolphins swimming
+3. Tree of life evolution
+4. Ant colony foraging
+5. Bee swarm pollination
+6. Fish schooling
+7. Wolves hunting in packs
+8. Penguins crossing ice
+9. Bats using echolocation
+10. Butterflies migrating
+11. Coral reef ecosystem
+12. Plankton drifting in ocean currents
+13. Forest fire spreading
+14. Rain falling into a river system
+15. Clouds forming and dissolving
+16. Lightning storm over a landscape
+17. Wind moving through tall grass
+18. Sand dunes shifting over time
+19. Volcano eruption and lava flow
+20. Earthquake wave propagation
+21. Planet orbit system
+22. Solar system formation
+23. Galaxy collision
+24. Black hole accretion disk
+25. Asteroid field motion
+26. Rocket launch and landing
+27. Satellite orbit correction
+28. Space elevator tension system
+29. Moon base resource cycle
+30. Mars rover exploration
+31. Human heartbeat
+32. Blood flowing through vessels
+33. Neuron network firing
+34. Immune system attacking infection
+35. DNA replication
+36. Protein folding
+37. Cell division
+38. Embryo development
+39. Wound healing
+40. Muscle contraction
+41. Predator-prey ecosystem
+42. Food web collapse and recovery
+43. Island evolution
+44. Invasive species spread
+45. Plant root growth through soil
+46. Mushroom mycelium network
+47. Tree growth through seasons
+48. Photosynthesis energy flow
+49. Animal migration under climate pressure
+50. Natural selection in changing environments
+51. City traffic flow
+52. Pedestrian crowd movement
+53. Subway network congestion
+54. Supply chain disruption
+55. Airport runway scheduling
+56. Elevator movement in a skyscraper
+57. Power grid load balancing
+58. Internet packet routing
+59. Social network rumor spread
+60. Marketplace buying and selling
+61. Stock market behavior
+62. Bank run panic
+63. Restaurant kitchen workflow
+64. Hospital emergency room triage
+65. School classroom learning dynamics
+66. Farm crop growth and harvest
+67. Water treatment plant cycle
+68. Recycling sorting system
+69. Factory assembly line
+70. Warehouse robot navigation
+71. Basketball dribbling
+72. Soccer free kick
+73. Baseball pitch and hit
+74. Tennis rally
+75. Bowling ball motion
+76. Skateboard trick physics
+77. Pendulum swing
+78. Domino chain reaction
+79. Ball rolling down a ramp
+80. Rubber band car
+81. Paper airplane flight
+82. Balloon rocket
+83. Pulley lift
+84. Spring launcher
+85. Spinning top
+86. Boat floating in waves
+87. Submarine diving and surfacing
+88. Fire spreading through fuel
+89. Candle flame behavior
+90. Cooking food heat transfer
+91. Ice melting
+92. Water freezing into crystals
+93. Steam rising from hot water
+94. Coffee mixing with milk
+95. Ink spreading in water
+96. Sound waves moving through air
+97. Music rhythm synchronization
+98. Camera autofocus
+99. Robot learning to walk
+100. AI controller tuning a simulation over rounds

@@ -1,0 +1,5 @@
+Driftfall Rocket Lab
+
+Created as a small browser game prototype.
+
+You may modify, remix, and upload this project to itch.io.
