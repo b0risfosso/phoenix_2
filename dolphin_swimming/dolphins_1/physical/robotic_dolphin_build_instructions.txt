@@ -1,0 +1,289 @@
+Robotic Dolphin-Inspired Swimmer
+
+Goal
+Build a small mechanical dolphin that floats, stays balanced, and moves forward by wagging a flexible tail with a servo motor.
+
+Materials
+
+Waterproof body shell:
+- Plastic bottle, plastic food container, foam block, or 3D-printed shell
+- Waterproof tape
+- Silicone sealant or hot glue
+- Rubber gasket or balloon/plastic bag for inner electronics protection
+
+Electronics:
+- Small servo motor
+- Battery pack
+- Microcontroller such as Arduino Nano, Micro:bit, ESP32, or similar
+- Jumper wires
+- On/off switch
+
+Tail system:
+- Flexible plastic strip, rubber sheet, silicone sheet, or thin craft foam
+- Soft plastic or foam for tail flukes
+- Small servo horn
+- Zip ties, screws, glue, or tape
+
+Balance:
+- Foam for flotation
+- Small metal washers, coins, fishing weights, or clay for ballast
+
+Testing:
+- Bowl, sink, bathtub, or shallow tub of water
+- Towel
+- Dry work surface
+
+Safety Notes
+Keep the first version low voltage and small. Do not use wall power near water. Put the battery and controller inside a sealed inner bag or waterproof compartment. Test the tail movement outside water before putting the swimmer in water.
+
+Step 1: Create the Waterproof Body Shell
+Choose a body shape that is long, smooth, and buoyant. A small plastic bottle works well for a first version.
+
+1. Pick a lightweight plastic body.
+2. Make the front rounded like a dolphin head.
+3. Keep the middle section wide enough to hold electronics.
+4. Leave the rear narrow enough for a tail connection.
+5. Add foam inside or outside if the body does not float.
+6. Make one access opening so electronics can be inserted and removed.
+
+The body does not need to look perfect at first. The important features are floatation, balance, and a dry electronics chamber.
+
+Step 2: Place Electronics and Battery Inside
+Place the electronics near the center of the body.
+
+1. Put the battery pack inside first.
+2. Place the microcontroller above or beside the battery.
+3. Keep wires short and organized.
+4. Put electronics inside a small plastic bag, balloon, or sealed pouch.
+5. Route the servo wire toward the tail.
+6. Add an on/off switch if available.
+
+The battery should sit low in the body so the dolphin naturally stays upright.
+
+Step 3: Build the Flexible Tail Section
+The tail should bend side-to-side or up-and-down depending on the design. The simplest version uses a servo that swings the tail left and right.
+
+1. Cut a flexible strip about 8-15 cm long.
+2. Attach one end of the strip to the back of the body.
+3. Attach the other end to the tail flukes.
+4. Make sure the strip bends smoothly.
+5. Do not make it too stiff, or the servo may struggle.
+6. Do not make it too floppy, or it will not push water well.
+
+A good first tail material is thin plastic from packaging, soft rubber, or craft foam reinforced with tape.
+
+Step 4: Attach the Servo Motor
+The servo creates the tail oscillation.
+
+1. Mount the servo near the rear of the body.
+2. Keep the servo shaft aligned with the flexible tail.
+3. Attach a servo horn to the servo.
+4. Connect the servo horn to the tail using tape, wire, or a small linkage.
+5. Move the servo by hand gently to check that the tail swings freely.
+6. Make sure the servo does not hit the body shell.
+
+For a first model, the servo can stay inside the body with only the moving horn or linkage reaching the tail. This makes waterproofing easier.
+
+Step 5: Add Soft Tail Flukes
+The flukes are the two flat tail paddles that push water.
+
+1. Cut two symmetrical flukes from foam, rubber, or plastic.
+2. Shape them like a wide V or crescent.
+3. Attach them to the end of the flexible tail.
+4. Keep them soft enough to bend slightly in water.
+5. Keep them wide enough to push water.
+6. Make sure both sides are balanced.
+
+A larger tail pushes more water but also creates more drag. Start small, then increase size if the swimmer barely moves.
+
+Step 6: Seal All Openings
+Waterproofing is the most important part.
+
+1. Seal body seams with silicone, hot glue, or waterproof tape.
+2. Seal the wire exit point near the servo.
+3. Seal around the tail mount.
+4. Keep the electronics inside a second waterproof barrier.
+5. Let silicone fully cure before water testing.
+6. Shake the body gently and listen for loose parts.
+
+Use two layers of protection: an outer sealed shell and an inner sealed electronics pouch.
+
+Step 7: Test Motor Movement Outside Water
+Before water testing, confirm the servo works in air.
+
+1. Turn the robot on while it is dry.
+2. Watch the tail swing left and right.
+3. Check that the servo does not stall or buzz loudly.
+4. Check that wires do not pull loose.
+5. Test slow, medium, and fast speeds.
+6. Turn it off and inspect the tail joint.
+
+The tail should move rhythmically:
+center -> left -> center -> right -> center
+
+Step 8: Program Tail-Beat Modes
+Use simple servo angles.
+
+Slow mode:
+- Small angle
+- Low frequency
+- Gentle swimming
+
+Medium mode:
+- Medium angle
+- Moderate frequency
+- Normal swimming
+
+Fast mode:
+- Larger angle
+- Faster frequency
+- Burst swimming
+
+Example Arduino-style logic:
+
+#include <Servo.h>
+
+Servo tail;
+
+int centerAngle = 90;
+int slowAmp = 15;
+int mediumAmp = 25;
+int fastAmp = 35;
+
+void setup() {
+  tail.attach(9);
+}
+
+void wagTail(int amplitude, int delayTime) {
+  tail.write(centerAngle - amplitude);
+  delay(delayTime);
+  tail.write(centerAngle + amplitude);
+  delay(delayTime);
+}
+
+void loop() {
+  // Slow swimming
+  for (int i = 0; i < 20; i++) {
+    wagTail(slowAmp, 220);
+  }
+
+  // Medium swimming
+  for (int i = 0; i < 30; i++) {
+    wagTail(mediumAmp, 150);
+  }
+
+  // Fast burst
+  for (int i = 0; i < 20; i++) {
+    wagTail(fastAmp, 90);
+  }
+}
+
+Step 9: Test Flotation in Shallow Water
+Use shallow water first.
+
+1. Place the dolphin in water while powered off.
+2. Check whether it floats.
+3. Check whether it stays upright.
+4. Check whether the tail is partly submerged.
+5. Check whether the nose points too far up or down.
+6. Remove it and dry it immediately if water enters.
+
+The ideal position:
+- Body floats level.
+- Tail sits in the water.
+- Top of body remains above water or just below the surface.
+- Electronics stay dry.
+
+Step 10: Adjust Weight and Balance
+Balance determines whether it swims forward or rolls over.
+
+1. If the nose rises too much, add weight near the front.
+2. If the nose sinks, move weight backward.
+3. If it rolls sideways, add weight lower in the body.
+4. If it sinks, add foam.
+5. If the tail is too high, add slight weight near the rear.
+6. If the tail is too low, add foam near the rear.
+
+Make small changes and retest after each adjustment.
+
+Step 11: Test Powered Swimming
+After flotation works, test the motor in water.
+
+1. Turn on slow mode first.
+2. Place the dolphin in shallow water.
+3. Watch whether the tail pushes water.
+4. Observe whether it moves forward, spins, stalls, or rolls.
+5. Stop the test after a short run.
+6. Remove the dolphin and inspect for leaks.
+
+Possible Results
+
+Moves forward:
+- Tail and balance are working.
+
+Spins in circles:
+- Tail is off-center or body is unevenly weighted.
+
+Barely moves:
+- Tail is too small, too soft, or servo motion is too weak.
+
+Rolls over:
+- Weight is too high or body is too round.
+
+Sinks:
+- Too much weight or not enough flotation.
+
+Leaks:
+- Dry immediately and reseal.
+
+Step 12: Improve the Dolphin Shape
+After the basic version swims, improve the dolphin-like body.
+
+1. Add a rounded forehead.
+2. Add a short rostrum/nose.
+3. Add a dorsal fin on top.
+4. Add two side pectoral fins.
+5. Smooth the body with tape, foam, or plastic covering.
+6. Paint the top gray-blue and the underside light gray.
+7. Add a blowhole mark and eyes.
+
+Do not add too many decorations until the swimming behavior works.
+
+Simple Build Sequence
+
+1. Build floating body.
+2. Install battery and controller.
+3. Attach servo.
+4. Attach flexible tail.
+5. Add soft flukes.
+6. Seal the body.
+7. Test tail motion dry.
+8. Test flotation.
+9. Adjust weight.
+10. Test swimming.
+11. Tune tail speed.
+12. Add dolphin details.
+
+Scientific Principle
+The robotic dolphin moves by converting servo oscillation into water thrust. The tail sweeps side to side, pushing water backward and sideways. The reaction force pushes the body forward.
+
+Basic movement model:
+- Tail angle changes over time.
+- Tail pushes water.
+- Water resists tail motion.
+- Reaction force moves body forward.
+- Body drag slows motion.
+- Balance controls whether motion is straight, tilted, or circular.
+
+Suggested First Prototype
+
+Body: small plastic bottle
+Tail: flexible plastic strip
+Flukes: craft foam
+Motor: small waterproofed servo
+Controller: Arduino Nano or Micro:bit
+Battery: small battery pack
+Sealant: silicone + waterproof tape
+Test area: bathtub or shallow plastic tub
+
+The first goal should be stable floating and visible tail-driven motion, not speed.
