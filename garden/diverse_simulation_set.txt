@@ -1,0 +1,12 @@
+Diverse Simulation Set
+
+1. Dolphin swimming — animal biomechanics, water drag, tail propulsion
+2. Volcano eruption — geology, pressure buildup, lava flow, ash spread
+3. City traffic network — urban planning, congestion, signals, routing
+4. Immune system response — biology, infection spread, immune-cell targeting
+5. Rocket launch — aerospace physics, thrust, gravity, fuel use
+6. Stock market behavior — economics, supply, demand, volatility
+7. Language evolution — culture, communication drift, new word formation
+8. Cooking process — chemistry, heat transfer, timing, ingredient transformation
+9. Music rhythm generator — sound, pattern, tempo, variation
+10. Robot warehouse system — engineering, pathfinding, task scheduling, collisions

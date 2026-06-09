@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Keyboard Color Tracker</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --key-border: rgba(20, 35, 65, 0.22);
+      --key-text: #182033;
+      --shadow: rgba(20, 35, 65, 0.15);
+      --muted: #667085;
+      --current-color: #ffffff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: radial-gradient(circle at top, #ffffff, var(--bg));
+      color: #182033;
+      min-height: 100vh;
+      padding: 24px;
+    }
+
+    .app { max-width: 1180px; margin: 0 auto; }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    h1 { margin: 0 0 6px; font-size: 28px; }
+
+    .subtitle { color: var(--muted); margin: 0; line-height: 1.4; }
+
+    .controls { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; }
+
+    button {
+      border: 1px solid #b9c4d6;
+      background: #ffffff;
+      color: #182033;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 14px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px var(--shadow);
+    }
+
+    button:hover { background: #f0f4fa; }
+    button.primary { background: #182033; color: #ffffff; border-color: #182033; }
+
+    .color-stage {
+      height: 255px;
+      border-radius: 22px;
+      border: 1px solid #dbe3ef;
+      background: var(--current-color);
+      box-shadow: 0 8px 28px var(--shadow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 18px;
+      overflow: hidden;
+      transition: background 90ms linear, transform 90ms ease;
+    }
+
+    .color-stage.flash { transform: scale(1.01); }
+
+    .color-text {
+      text-align: center;
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid rgba(20, 35, 65, 0.12);
+      border-radius: 18px;
+      padding: 18px 26px;
+      backdrop-filter: blur(8px);
+      min-width: 260px;
+    }
+
+    .color-text .big { font-size: 42px; font-weight: 800; line-height: 1; margin-bottom: 10px; }
+    .color-text .small { color: #344054; font-size: 15px; }
+
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(150px, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .status-card {
+      background: var(--panel);
+      border: 1px solid #dbe3ef;
+      border-radius: 14px;
+      padding: 14px;
+      box-shadow: 0 4px 16px var(--shadow);
+      min-height: 74px;
+    }
+
+    .label {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 8px;
+    }
+
+    .value { font-size: 22px; font-weight: 700; overflow-wrap: anywhere; }
+
+    .swatch-value { display: flex; align-items: center; gap: 10px; font-size: 17px; }
+    .swatch {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      border: 1px solid rgba(20, 35, 65, 0.25);
+      background: var(--current-color);
+    }
+
+    .keyboard-wrap {
+      background: var(--panel);
+      border: 1px solid #dbe3ef;
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: 0 4px 16px var(--shadow);
+      overflow-x: auto;
+    }
+
+    .keyboard { min-width: 980px; display: grid; gap: 8px; }
+    .row { display: flex; gap: 8px; }
+
+    .key {
+      height: 54px;
+      min-width: 54px;
+      padding: 6px;
+      border-radius: 10px;
+      border: 1px solid var(--key-border);
+      background: var(--key-color);
+      color: var(--key-text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      box-shadow: 0 3px 0 rgba(20, 35, 65, 0.28);
+      user-select: none;
+      transition: transform 80ms ease, filter 80ms ease, box-shadow 80ms ease, outline 80ms ease;
+      position: relative;
+    }
+
+    .key::after {
+      content: "";
+      position: absolute;
+      inset: 5px;
+      border-radius: 7px;
+      border: 1px solid rgba(255, 255, 255, 0.32);
+      pointer-events: none;
+    }
+
+    .key.active, .key.held {
+      transform: translateY(3px);
+      filter: saturate(1.45) brightness(1.08);
+      outline: 3px solid rgba(20, 35, 65, 0.46);
+      box-shadow: 0 0 0 rgba(20, 35, 65, 0.28), 0 0 22px var(--key-color);
+    }
+
+    .w-1-25 { min-width: 68px; }
+    .w-1-5 { min-width: 82px; }
+    .w-1-75 { min-width: 96px; }
+    .w-2 { min-width: 110px; }
+    .w-2-25 { min-width: 124px; }
+    .w-2-75 { min-width: 150px; }
+    .w-6 { min-width: 330px; }
+
+    .panels { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 18px; }
+    .panel {
+      background: var(--panel);
+      border: 1px solid #dbe3ef;
+      border-radius: 14px;
+      padding: 14px;
+      box-shadow: 0 4px 16px var(--shadow);
+    }
+
+    .panel h2 { margin: 0 0 10px; font-size: 17px; }
+
+    #heldKeys {
+      min-height: 44px;
+      padding: 10px;
+      border-radius: 10px;
+      background: #f4f7fb;
+      border: 1px solid #dbe3ef;
+      line-height: 1.5;
+    }
+
+    #log {
+      height: 220px;
+      overflow: auto;
+      background: #111827;
+      color: #e5e7eb;
+      border-radius: 10px;
+      padding: 10px;
+      font-family: Menlo, Consolas, monospace;
+      font-size: 13px;
+      line-height: 1.55;
+      white-space: pre-wrap;
+    }
+
+    .note { color: var(--muted); font-size: 13px; margin-top: 10px; line-height: 1.4; }
+
+    @media (max-width: 820px) {
+      body { padding: 14px; }
+      header, .panels { grid-template-columns: 1fr; display: block; }
+      .controls { justify-content: flex-start; margin-top: 12px; }
+      .status-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div>
+        <h1>Keyboard Color Tracker</h1>
+        <p class="subtitle">Each onscreen key has its own color. Press a physical key to show that key color on the main display.</p>
+      </div>
+      <div class="controls">
+        <button id="pauseBtn" class="primary">Pause tracking</button>
+        <button id="clearBtn">Clear log</button>
+        <button id="downloadBtn">Download log</button>
+      </div>
+    </header>
+
+    <section class="color-stage" id="colorStage">
+      <div class="color-text">
+        <div class="big" id="stageKey">Press a key</div>
+        <div class="small" id="stageColor">Color will appear here</div>
+      </div>
+    </section>
+
+    <section class="status-grid">
+      <div class="status-card"><div class="label">Last key</div><div class="value" id="lastKey">—</div></div>
+      <div class="status-card"><div class="label">Last code</div><div class="value" id="lastCode">—</div></div>
+      <div class="status-card"><div class="label">Current color</div><div class="value swatch-value"><span class="swatch" id="swatch"></span><span id="colorValue">—</span></div></div>
+      <div class="status-card"><div class="label">Total keydowns</div><div class="value" id="totalCount">0</div></div>
+    </section>
+
+    <main class="keyboard-wrap">
+      <div class="keyboard" id="keyboard">
+        <div class="row">
+          <div class="key" data-code="Escape" style="--key-color: hsl(0, 78%, 64%);">Esc</div>
+          <div class="key" data-code="F1" style="--key-color: hsl(5, 78%, 64%);">F1</div>
+          <div class="key" data-code="F2" style="--key-color: hsl(10, 78%, 64%);">F2</div>
+          <div class="key" data-code="F3" style="--key-color: hsl(15, 78%, 64%);">F3</div>
+          <div class="key" data-code="F4" style="--key-color: hsl(20, 78%, 64%);">F4</div>
+          <div class="key" data-code="F5" style="--key-color: hsl(25, 78%, 64%);">F5</div>
+          <div class="key" data-code="F6" style="--key-color: hsl(30, 78%, 64%);">F6</div>
+          <div class="key" data-code="F7" style="--key-color: hsl(35, 78%, 64%);">F7</div>
+          <div class="key" data-code="F8" style="--key-color: hsl(40, 78%, 64%);">F8</div>
+          <div class="key" data-code="F9" style="--key-color: hsl(45, 78%, 64%);">F9</div>
+          <div class="key" data-code="F10" style="--key-color: hsl(50, 78%, 64%);">F10</div>
+          <div class="key" data-code="F11" style="--key-color: hsl(55, 78%, 64%);">F11</div>
+          <div class="key" data-code="F12" style="--key-color: hsl(60, 78%, 64%);">F12</div>
+        </div>
+        <div class="row">
+          <div class="key" data-code="Backquote" style="--key-color: hsl(65, 78%, 64%);">`</div>
+          <div class="key" data-code="Digit1" style="--key-color: hsl(70, 78%, 64%);">1</div>
+          <div class="key" data-code="Digit2" style="--key-color: hsl(75, 78%, 64%);">2</div>
+          <div class="key" data-code="Digit3" style="--key-color: hsl(80, 78%, 64%);">3</div>
+          <div class="key" data-code="Digit4" style="--key-color: hsl(85, 78%, 64%);">4</div>
+          <div class="key" data-code="Digit5" style="--key-color: hsl(90, 78%, 64%);">5</div>
+          <div class="key" data-code="Digit6" style="--key-color: hsl(95, 78%, 64%);">6</div>
+          <div class="key" data-code="Digit7" style="--key-color: hsl(100, 78%, 64%);">7</div>
+          <div class="key" data-code="Digit8" style="--key-color: hsl(105, 78%, 64%);">8</div>
+          <div class="key" data-code="Digit9" style="--key-color: hsl(110, 78%, 64%);">9</div>
+          <div class="key" data-code="Digit0" style="--key-color: hsl(115, 78%, 64%);">0</div>
+          <div class="key" data-code="Minus" style="--key-color: hsl(120, 78%, 64%);">-</div>
+          <div class="key" data-code="Equal" style="--key-color: hsl(125, 78%, 64%);">=</div>
+          <div class="key w-2" data-code="Backspace" style="--key-color: hsl(130, 78%, 64%);">Backspace</div>
+        </div>
+        <div class="row">
+          <div class="key w-1-5" data-code="Tab" style="--key-color: hsl(135, 78%, 64%);">Tab</div>
+          <div class="key" data-code="KeyQ" style="--key-color: hsl(140, 78%, 64%);">Q</div>
+          <div class="key" data-code="KeyW" style="--key-color: hsl(145, 78%, 64%);">W</div>
+          <div class="key" data-code="KeyE" style="--key-color: hsl(150, 78%, 64%);">E</div>
+          <div class="key" data-code="KeyR" style="--key-color: hsl(155, 78%, 64%);">R</div>
+          <div class="key" data-code="KeyT" style="--key-color: hsl(160, 78%, 64%);">T</div>
+          <div class="key" data-code="KeyY" style="--key-color: hsl(165, 78%, 64%);">Y</div>
+          <div class="key" data-code="KeyU" style="--key-color: hsl(170, 78%, 64%);">U</div>
+          <div class="key" data-code="KeyI" style="--key-color: hsl(175, 78%, 64%);">I</div>
+          <div class="key" data-code="KeyO" style="--key-color: hsl(180, 78%, 64%);">O</div>
+          <div class="key" data-code="KeyP" style="--key-color: hsl(185, 78%, 64%);">P</div>
+          <div class="key" data-code="BracketLeft" style="--key-color: hsl(190, 78%, 64%);">[</div>
+          <div class="key" data-code="BracketRight" style="--key-color: hsl(195, 78%, 64%);">]</div>
+          <div class="key w-1-5" data-code="Backslash" style="--key-color: hsl(200, 78%, 64%);">\</div>
+        </div>
+        <div class="row">
+          <div class="key w-1-75" data-code="CapsLock" style="--key-color: hsl(205, 78%, 64%);">Caps</div>
+          <div class="key" data-code="KeyA" style="--key-color: hsl(210, 78%, 64%);">A</div>
+          <div class="key" data-code="KeyS" style="--key-color: hsl(215, 78%, 64%);">S</div>
+          <div class="key" data-code="KeyD" style="--key-color: hsl(220, 78%, 64%);">D</div>
+          <div class="key" data-code="KeyF" style="--key-color: hsl(225, 78%, 64%);">F</div>
+          <div class="key" data-code="KeyG" style="--key-color: hsl(230, 78%, 64%);">G</div>
+          <div class="key" data-code="KeyH" style="--key-color: hsl(235, 78%, 64%);">H</div>
+          <div class="key" data-code="KeyJ" style="--key-color: hsl(240, 78%, 64%);">J</div>
+          <div class="key" data-code="KeyK" style="--key-color: hsl(245, 78%, 64%);">K</div>
+          <div class="key" data-code="KeyL" style="--key-color: hsl(250, 78%, 64%);">L</div>
+          <div class="key" data-code="Semicolon" style="--key-color: hsl(255, 78%, 64%);">;</div>
+          <div class="key" data-code="Quote" style="--key-color: hsl(260, 78%, 64%);">'</div>
+          <div class="key w-2-25" data-code="Enter" style="--key-color: hsl(265, 78%, 64%);">Enter</div>
+        </div>
+        <div class="row">
+          <div class="key w-2-25" data-code="ShiftLeft" style="--key-color: hsl(270, 78%, 64%);">Shift</div>
+          <div class="key" data-code="KeyZ" style="--key-color: hsl(275, 78%, 64%);">Z</div>
+          <div class="key" data-code="KeyX" style="--key-color: hsl(280, 78%, 64%);">X</div>
+          <div class="key" data-code="KeyC" style="--key-color: hsl(285, 78%, 64%);">C</div>
+          <div class="key" data-code="KeyV" style="--key-color: hsl(290, 78%, 64%);">V</div>
+          <div class="key" data-code="KeyB" style="--key-color: hsl(295, 78%, 64%);">B</div>
+          <div class="key" data-code="KeyN" style="--key-color: hsl(300, 78%, 64%);">N</div>
+          <div class="key" data-code="KeyM" style="--key-color: hsl(305, 78%, 64%);">M</div>
+          <div class="key" data-code="Comma" style="--key-color: hsl(310, 78%, 64%);">,</div>
+          <div class="key" data-code="Period" style="--key-color: hsl(315, 78%, 64%);">.</div>
+          <div class="key" data-code="Slash" style="--key-color: hsl(320, 78%, 64%);">/</div>
+          <div class="key w-2-75" data-code="ShiftRight" style="--key-color: hsl(325, 78%, 64%);">Shift</div>
+        </div>
+        <div class="row">
+          <div class="key w-1-25" data-code="ControlLeft" style="--key-color: hsl(330, 78%, 64%);">Ctrl</div>
+          <div class="key w-1-25" data-code="MetaLeft" style="--key-color: hsl(335, 78%, 64%);">⌘</div>
+          <div class="key w-1-25" data-code="AltLeft" style="--key-color: hsl(340, 78%, 64%);">Alt</div>
+          <div class="key w-6" data-code="Space" style="--key-color: hsl(345, 78%, 64%);">Space</div>
+          <div class="key w-1-25" data-code="AltRight" style="--key-color: hsl(350, 78%, 64%);">Alt</div>
+          <div class="key w-1-25" data-code="MetaRight" style="--key-color: hsl(355, 78%, 64%);">⌘</div>
+          <div class="key w-1-25" data-code="ControlRight" style="--key-color: hsl(0, 78%, 64%);">Ctrl</div>
+          <div class="key" data-code="ArrowLeft" style="--key-color: hsl(20, 78%, 64%);">←</div>
+          <div class="key" data-code="ArrowUp" style="--key-color: hsl(40, 78%, 64%);">↑</div>
+          <div class="key" data-code="ArrowDown" style="--key-color: hsl(60, 78%, 64%);">↓</div>
+          <div class="key" data-code="ArrowRight" style="--key-color: hsl(80, 78%, 64%);">→</div>
+        </div>
+      </div>
+    </main>
+
+    <section class="panels">
+      <div class="panel">
+        <h2>Held keys</h2>
+        <div id="heldKeys">None</div>
+        <p class="note">Held keys remain outlined. The large color display updates to the most recent keydown.</p>
+      </div>
+      <div class="panel">
+        <h2>Event log</h2>
+        <div id="log"></div>
+        <p class="note">Click the page once if the browser is not receiving keyboard input.</p>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const keyEls = new Map();
+    const held = new Map();
+    const logEntries = [];
+    let paused = false;
+    let totalKeydowns = 0;
+
+    const root = document.documentElement;
+    const colorStage = document.getElementById("colorStage");
+    const stageKey = document.getElementById("stageKey");
+    const stageColor = document.getElementById("stageColor");
+    const lastKeyEl = document.getElementById("lastKey");
+    const lastCodeEl = document.getElementById("lastCode");
+    const totalCountEl = document.getElementById("totalCount");
+    const colorValueEl = document.getElementById("colorValue");
+    const swatchEl = document.getElementById("swatch");
+    const heldKeysEl = document.getElementById("heldKeys");
+    const logEl = document.getElementById("log");
+    const pauseBtn = document.getElementById("pauseBtn");
+    const clearBtn = document.getElementById("clearBtn");
+    const downloadBtn = document.getElementById("downloadBtn");
+
+    document.querySelectorAll(".key").forEach((el) => keyEls.set(el.dataset.code, el));
+
+    function readableKey(event) {
+      if (event.code === "Space") return "Space";
+      if (event.key === " ") return "Space";
+      return event.key.length === 1 ? event.key.toUpperCase() : event.key;
+    }
+
+    function nowStamp() {
+      const d = new Date();
+      return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit", fractionalSecondDigits: 3 });
+    }
+
+    function fallbackColorForCode(code) {
+      let hash = 0;
+      for (let i = 0; i < code.length; i += 1) hash = (hash * 31 + code.charCodeAt(i)) >>> 0;
+      return `hsl(${hash % 360}, 78%, 63%)`;
+    }
+
+    function getKeyColor(code) {
+      const el = keyEls.get(code);
+      if (el) return getComputedStyle(el).getPropertyValue("--key-color").trim();
+      return fallbackColorForCode(code);
+    }
+
+    function showColor(keyName, code) {
+      const color = getKeyColor(code);
+      root.style.setProperty("--current-color", color);
+      colorStage.style.background = color;
+      swatchEl.style.background = color;
+      colorValueEl.textContent = color;
+      stageKey.textContent = keyName;
+      stageColor.textContent = `${code} → ${color}`;
+      colorStage.classList.remove("flash");
+      void colorStage.offsetWidth;
+      colorStage.classList.add("flash");
+      window.setTimeout(() => colorStage.classList.remove("flash"), 120);
+    }
+
+    function addLog(type, event) {
+      const entry = { time: nowStamp(), type, key: readableKey(event), code: event.code, color: getKeyColor(event.code), repeat: event.repeat };
+      logEntries.push(entry);
+      logEl.textContent += `[${entry.time}] ${entry.type.padEnd(7)} key=${entry.key} code=${entry.code} color=${entry.color}${entry.repeat ? " repeat" : ""}\n`;
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+
+    function updateHeldPanel() {
+      const values = Array.from(held.values());
+      heldKeysEl.textContent = values.length ? values.join(" + ") : "None";
+    }
+
+    function pulseKey(el) {
+      el.classList.add("active");
+      window.setTimeout(() => {
+        if (!el.classList.contains("held")) el.classList.remove("active");
+      }, 140);
+    }
+
+    function setHeld(code, isHeld) {
+      const el = keyEls.get(code);
+      if (!el) return;
+      if (isHeld) el.classList.add("held");
+      else el.classList.remove("held", "active");
+    }
+
+    window.addEventListener("keydown", (event) => {
+      if (paused) return;
+      const keyName = readableKey(event);
+      const el = keyEls.get(event.code);
+      totalKeydowns += 1;
+      totalCountEl.textContent = String(totalKeydowns);
+      lastKeyEl.textContent = keyName;
+      lastCodeEl.textContent = event.code;
+      showColor(keyName, event.code);
+      if (!held.has(event.code)) held.set(event.code, keyName);
+      if (el) { pulseKey(el); setHeld(event.code, true); }
+      updateHeldPanel();
+      addLog("keydown", event);
+      if (event.code === "Space" || event.code === "Tab" || event.code.startsWith("Arrow")) event.preventDefault();
+    });
+
+    window.addEventListener("keyup", (event) => {
+      if (paused) return;
+      held.delete(event.code);
+      setHeld(event.code, false);
+      updateHeldPanel();
+      addLog("keyup", event);
+      if (event.code === "Space" || event.code === "Tab" || event.code.startsWith("Arrow")) event.preventDefault();
+    });
+
+    window.addEventListener("blur", () => {
+      held.clear();
+      document.querySelectorAll(".key").forEach((el) => el.classList.remove("held", "active"));
+      updateHeldPanel();
+    });
+
+    pauseBtn.addEventListener("click", () => {
+      paused = !paused;
+      pauseBtn.textContent = paused ? "Resume tracking" : "Pause tracking";
+      if (paused) {
+        held.clear();
+        document.querySelectorAll(".key").forEach((el) => el.classList.remove("held", "active"));
+        updateHeldPanel();
+        stageKey.textContent = "Paused";
+        stageColor.textContent = "Tracking is paused";
+      } else {
+        stageKey.textContent = "Press a key";
+        stageColor.textContent = "Color will appear here";
+      }
+    });
+
+    clearBtn.addEventListener("click", () => {
+      logEntries.length = 0;
+      logEl.textContent = "";
+      totalKeydowns = 0;
+      totalCountEl.textContent = "0";
+      lastKeyEl.textContent = "—";
+      lastCodeEl.textContent = "—";
+      colorValueEl.textContent = "—";
+      root.style.setProperty("--current-color", "#ffffff");
+      colorStage.style.background = "#ffffff";
+      swatchEl.style.background = "#ffffff";
+      stageKey.textContent = "Press a key";
+      stageColor.textContent = "Color will appear here";
+    });
+
+    downloadBtn.addEventListener("click", () => {
+      const header = "time,type,key,code,color,repeat\n";
+      const rows = logEntries.map((e) => [e.time, e.type, e.key, e.code, e.color, e.repeat]
+        .map((v) => `"${String(v).replaceAll('"', '""')}"`).join(","));
+      const blob = new Blob([header + rows.join("\n")], { type: "text/csv" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "keyboard_color_log.csv";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    });
+  </script>
+</body>
+</html>

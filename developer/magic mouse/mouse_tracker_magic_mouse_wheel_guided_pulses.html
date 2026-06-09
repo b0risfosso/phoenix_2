@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Magic Mouse Wheel-Guided Cursor + Movement Pulses</title>
+  <style>
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      user-select: none;
+    }
+
+    * { box-sizing: border-box; }
+
+    #app {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    #tracker {
+      width: 100%;
+      height: 100%;
+      display: block;
+      background: #ffffff;
+      cursor: crosshair;
+    }
+
+    #panel {
+      padding: 16px;
+      background: #eeeeee;
+      border-left: 1px solid #cccccc;
+      font-size: 14px;
+      overflow-y: auto;
+    }
+
+    .status, .section {
+      padding: 10px;
+      background: #ffffff;
+      border: 1px solid #cccccc;
+      margin-bottom: 12px;
+      border-radius: 6px;
+    }
+
+    h2, h3 {
+      margin-top: 0;
+    }
+
+    .button-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    button, select {
+      width: 100%;
+      padding: 10px;
+      cursor: pointer;
+      border: 1px solid #bbbbbb;
+      border-radius: 6px;
+      background: #fafafa;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 6px 0;
+    }
+
+    .swatch {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 1px solid rgba(0,0,0,0.15);
+      flex: 0 0 auto;
+    }
+
+    code {
+      display: block;
+      white-space: pre-wrap;
+      background: #ffffff;
+      border: 1px solid #cccccc;
+      padding: 8px;
+      max-height: 240px;
+      overflow-y: auto;
+      border-radius: 6px;
+    }
+
+    .small {
+      color: #555555;
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .metric {
+      margin: 6px 0;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <canvas id="tracker"></canvas>
+
+    <div id="panel">
+      <h2>Magic Mouse Wheel-Guided Cursor</h2>
+
+      <div class="status">
+        <div><strong>Pointer Lock:</strong> <span id="lockStatus">Unlocked</span></div>
+        <div><strong>Replay:</strong> <span id="replayStatus">Idle</span></div>
+      </div>
+
+      <div class="section">
+        <p style="margin-top:0;">
+          Click inside the canvas or use <strong>Lock Pointer</strong> to capture mouse input.
+          Magic Mouse wheel X/Y gestures move the tracked cursor through world space while the cursor stays centered. Physical mouse movement creates color pulses.
+          Press <strong>Escape</strong> to release pointer lock.
+        </p>
+
+        <div class="button-row">
+          <button id="lockButton">Lock Pointer</button>
+          <button id="clearButton">Clear Events</button>
+        </div>
+        <div class="button-row">
+          <button id="downloadButton">Download JSON</button>
+          <button id="resetViewButton">Reset View</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>Replay Controls</h3>
+        <div class="button-row">
+          <button id="replayButton">Start Replay</button>
+          <button id="pauseReplayButton">Pause Replay</button>
+        </div>
+        <div class="button-row">
+          <button id="resumeReplayButton">Resume Replay</button>
+          <button id="stopReplayButton">Stop Replay</button>
+        </div>
+
+        <label for="speedSelect"><strong>Replay Speed</strong></label>
+        <select id="speedSelect">
+          <option value="0.25">0.25x</option>
+          <option value="0.5">0.5x</option>
+          <option value="1" selected>1x</option>
+          <option value="2">2x</option>
+          <option value="4">4x</option>
+        </select>
+        <p class="small">Replay redraws Magic Mouse wheel-guided cursor travel, movement pulses, clicks, and wheel vectors. While replay is showing, live input visualization pauses until you stop the replay.</p>
+      </div>
+
+      <div class="section">
+        <h3>Live State</h3>
+        <div class="metric">Total X delta: <span id="totalX">0</span></div>
+        <div class="metric">Total Y delta: <span id="totalY">0</span></div>
+        <div class="metric">Mouse movement pulses: <span id="motionPulseCount">0</span></div>
+        <div class="metric">World X: <span id="worldX">0</span></div>
+        <div class="metric">World Y: <span id="worldY">0</span></div>
+        <div class="metric">Events: <span id="eventCount">0</span></div>
+        <div class="metric">Clicks: <span id="clickCount">0</span></div>
+        <div class="metric">Wheels: <span id="wheelCount">0</span></div>
+        <div class="metric">Wheel X total: <span id="wheelXTotal">0</span></div>
+        <div class="metric">Wheel Y total: <span id="wheelYTotal">0</span></div>
+        <div class="metric">Last wheel vector: <span id="lastWheelVector">0, 0</span></div>
+        <div class="metric">Replay Progress: <span id="replayProgress">0 / 0</span></div>
+      </div>
+
+      <div class="section">
+        <h3>Visual Mapping Legend</h3>
+        <div class="legend-item"><span class="swatch" style="background:#1f77b4"></span> Magic Mouse wheel X/Y = cursor travel while centered</div>
+        <div class="legend-item"><span class="swatch" style="background:#17becf"></span> Physical mouse movement = cyan/yellow motion pulse</div>
+        <div class="legend-item"><span class="swatch" style="background:#d62728"></span> Mouse down = red pulse</div>
+        <div class="legend-item"><span class="swatch" style="background:#2ca02c"></span> Mouse up = green pulse</div>
+        <div class="legend-item"><span class="swatch" style="background:#9467bd"></span> Magic Mouse scroll = purple XY vector + direction label</div>
+        <div class="legend-item"><span class="swatch" style="background:#ff7f0e"></span> Pointer lock state = orange status badge</div>
+        <p class="small">Side-to-side Magic Mouse gestures move the cursor horizontally through world space. Up/down gestures move it vertically. Physical mouse movement no longer moves the cursor; it creates colored motion pulses.</p>
+      </div>
+
+      <div class="section">
+        <h3>Recent Events</h3>
+        <code id="eventLog"></code>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("tracker");
+    const ctx = canvas.getContext("2d");
+
+    const lockStatus = document.getElementById("lockStatus");
+    const replayStatusEl = document.getElementById("replayStatus");
+    const totalXEl = document.getElementById("totalX");
+    const totalYEl = document.getElementById("totalY");
+    const worldXEl = document.getElementById("worldX");
+    const worldYEl = document.getElementById("worldY");
+    const motionPulseCountEl = document.getElementById("motionPulseCount");
+    const eventCountEl = document.getElementById("eventCount");
+    const clickCountEl = document.getElementById("clickCount");
+    const wheelCountEl = document.getElementById("wheelCount");
+    const wheelXTotalEl = document.getElementById("wheelXTotal");
+    const wheelYTotalEl = document.getElementById("wheelYTotal");
+    const lastWheelVectorEl = document.getElementById("lastWheelVector");
+    const replayProgressEl = document.getElementById("replayProgress");
+    const eventLogEl = document.getElementById("eventLog");
+
+    const lockButton = document.getElementById("lockButton");
+    const clearButton = document.getElementById("clearButton");
+    const downloadButton = document.getElementById("downloadButton");
+    const resetViewButton = document.getElementById("resetViewButton");
+
+    const replayButton = document.getElementById("replayButton");
+    const pauseReplayButton = document.getElementById("pauseReplayButton");
+    const resumeReplayButton = document.getElementById("resumeReplayButton");
+    const stopReplayButton = document.getElementById("stopReplayButton");
+    const speedSelect = document.getElementById("speedSelect");
+
+    let events = [];
+    let recordingStart = null;
+
+    let totalX = 0;
+    let totalY = 0;
+    let clickCount = 0;
+    let motionPulseCount = 0;
+    let wheelCount = 0;
+    let wheelXTotal = 0;
+    let wheelYTotal = 0;
+    let lastWheelVector = { x: 0, y: 0 };
+
+    const live = {
+      worldX: 0,
+      worldY: 0,
+      trail: []
+    };
+
+    let effectBursts = [];
+    let statusFlash = { label: "READY", color: "#ff7f0e", until: 0 };
+
+    const maxTrailPoints = 400;
+    const maxEffects = 160;
+
+    let replay = {
+      active: false,
+      paused: false,
+      showing: false,
+      speed: 1,
+      snapshot: [],
+      index: 0,
+      startedAt: 0,
+      pausedElapsed: 0,
+      worldX: 0,
+      worldY: 0,
+      trail: []
+    };
+
+    function clamp(v, min, max) {
+      return Math.max(min, Math.min(max, v));
+    }
+
+    function nowMs() {
+      return performance.now();
+    }
+
+    function screenCenter() {
+      return { x: canvas.width / 2, y: canvas.height / 2 };
+    }
+
+    function getCurrentState() {
+      return replay.showing ? replay : live;
+    }
+
+    function buttonName(button) {
+      if (button === 0) return "left";
+      if (button === 1) return "middle";
+      if (button === 2) return "right";
+      return `button-${button}`;
+    }
+
+    function wheelDirectionLabel(deltaX, deltaY) {
+      const threshold = 0.25;
+      const parts = [];
+      if (deltaY < -threshold) parts.push("up");
+      if (deltaY > threshold) parts.push("down");
+      if (deltaX < -threshold) parts.push("left");
+      if (deltaX > threshold) parts.push("right");
+      if (!parts.length) return "wheel still";
+      return "wheel " + parts.join("+");
+    }
+
+    function normalizedWheelVector(deltaX, deltaY, scale = 2.0, maxLength = 80) {
+      const length = Math.hypot(deltaX, deltaY);
+      if (length === 0) return { x: 0, y: 0, length: 0 };
+      const drawLength = Math.min(maxLength, Math.max(14, length * scale));
+      return {
+        x: (deltaX / length) * drawLength,
+        y: (deltaY / length) * drawLength,
+        length: drawLength
+      };
+    }
+
+    function movementPulseColor(dx, dy) {
+      const magnitude = Math.min(1, Math.hypot(dx, dy) / 60);
+      const hue = Math.round((Math.atan2(dy, dx) + Math.PI) / (Math.PI * 2) * 360);
+      const lightness = Math.round(45 + magnitude * 20);
+      return `hsl(${hue}, 85%, ${lightness}%)`;
+    }
+
+    function worldToScreen(wx, wy, cameraX, cameraY) {
+      const c = screenCenter();
+      return {
+        x: c.x + (wx - cameraX),
+        y: c.y + (wy - cameraY)
+      };
+    }
+
+    function addTrailPoint(targetTrail, x, y) {
+      targetTrail.push({ x, y });
+      if (targetTrail.length > maxTrailPoints) targetTrail.shift();
+    }
+
+    function addEffect(type, worldX, worldY, extra = {}) {
+      effectBursts.push({
+        type,
+        worldX,
+        worldY,
+        label: extra.label || "",
+        color: extra.color || "#000000",
+        deltaX: extra.deltaX || 0,
+        deltaY: extra.deltaY || 0,
+        createdAt: nowMs(),
+        duration: extra.duration || 700
+      });
+      if (effectBursts.length > maxEffects) effectBursts.shift();
+    }
+
+    function setStatusFlash(label, color = "#ff7f0e", duration = 1200) {
+      statusFlash = { label, color, until: nowMs() + duration };
+    }
+
+    function resetWorldState() {
+      live.worldX = 0;
+      live.worldY = 0;
+      live.trail = [];
+      replay.worldX = 0;
+      replay.worldY = 0;
+      replay.trail = [];
+      effectBursts = [];
+    }
+
+    function logEvent(type, data = {}) {
+      if (recordingStart === null) recordingStart = nowMs();
+      const relTime = nowMs() - recordingStart;
+      const event = {
+        type,
+        relTime,
+        isoTime: new Date().toISOString(),
+        ...data
+      };
+      events.push(event);
+      if (events.length > 10000) events.shift();
+      updatePanel();
+    }
+
+    function updatePanel() {
+      const current = getCurrentState();
+
+      totalXEl.textContent = Math.round(totalX);
+      totalYEl.textContent = Math.round(totalY);
+      worldXEl.textContent = Math.round(current.worldX);
+      worldYEl.textContent = Math.round(current.worldY);
+      motionPulseCountEl.textContent = motionPulseCount;
+      eventCountEl.textContent = events.length;
+      clickCountEl.textContent = clickCount;
+      wheelCountEl.textContent = wheelCount;
+      wheelXTotalEl.textContent = Math.round(wheelXTotal);
+      wheelYTotalEl.textContent = Math.round(wheelYTotal);
+      lastWheelVectorEl.textContent = `${Math.round(lastWheelVector.x)}, ${Math.round(lastWheelVector.y)}`;
+      replayProgressEl.textContent = `${replay.index} / ${replay.snapshot.length}`;
+
+      const recent = events.slice(-18).reverse();
+      eventLogEl.textContent = JSON.stringify(recent, null, 2);
+    }
+
+    function resizeCanvas() {
+      canvas.width = canvas.clientWidth;
+      canvas.height = canvas.clientHeight;
+    }
+
+    function drawGrid(cameraX, cameraY) {
+      const spacing = 50;
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.strokeStyle = "#e5e5e5";
+      ctx.lineWidth = 1;
+
+      let offsetX = ((-cameraX % spacing) + spacing) % spacing;
+      let offsetY = ((-cameraY % spacing) + spacing) % spacing;
+
+      for (let x = offsetX; x < canvas.width; x += spacing) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvas.height);
+        ctx.stroke();
+      }
+
+      for (let y = offsetY; y < canvas.height; y += spacing) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
+        ctx.stroke();
+      }
+
+      const origin = worldToScreen(0, 0, cameraX, cameraY);
+      ctx.strokeStyle = "#c9c9c9";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(origin.x, 0);
+      ctx.lineTo(origin.x, canvas.height);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(0, origin.y);
+      ctx.lineTo(canvas.width, origin.y);
+      ctx.stroke();
+
+      ctx.fillStyle = "#666666";
+      ctx.font = "12px Arial";
+      ctx.fillText("World origin", origin.x + 6, origin.y - 6);
+    }
+
+    function drawTrail(trail, cameraX, cameraY, color) {
+      if (trail.length < 2) return;
+      ctx.beginPath();
+      const start = worldToScreen(trail[0].x, trail[0].y, cameraX, cameraY);
+      ctx.moveTo(start.x, start.y);
+      for (let i = 1; i < trail.length; i++) {
+        const p = worldToScreen(trail[i].x, trail[i].y, cameraX, cameraY);
+        ctx.lineTo(p.x, p.y);
+      }
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+    }
+
+    function drawCenteredCursor(color, label) {
+      const c = screenCenter();
+
+      ctx.strokeStyle = "rgba(0,0,0,0.2)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(c.x - 18, c.y);
+      ctx.lineTo(c.x + 18, c.y);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(c.x, c.y - 18);
+      ctx.lineTo(c.x, c.y + 18);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(c.x, c.y, 8, 0, Math.PI * 2);
+      ctx.fillStyle = color;
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(c.x, c.y, 18, 0, Math.PI * 2);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.fillStyle = "#222222";
+      ctx.font = "14px Arial";
+      ctx.fillText(label, c.x + 18, c.y - 18);
+    }
+
+    function drawWheelVector(screenX, screenY, deltaX, deltaY, color, alpha = 1) {
+      const vec = normalizedWheelVector(deltaX, deltaY);
+      const endX = screenX + vec.x;
+      const endY = screenY + vec.y;
+
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.strokeStyle = color;
+      ctx.fillStyle = color;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(screenX, screenY);
+      ctx.lineTo(endX, endY);
+      ctx.stroke();
+
+      const angle = Math.atan2(vec.y, vec.x);
+      const head = 10;
+      ctx.beginPath();
+      ctx.moveTo(endX, endY);
+      ctx.lineTo(endX - head * Math.cos(angle - Math.PI / 6), endY - head * Math.sin(angle - Math.PI / 6));
+      ctx.lineTo(endX - head * Math.cos(angle + Math.PI / 6), endY - head * Math.sin(angle + Math.PI / 6));
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function drawEffects(timestamp, cameraX, cameraY) {
+      effectBursts = effectBursts.filter(effect => timestamp - effect.createdAt <= effect.duration);
+
+      for (const effect of effectBursts) {
+        const elapsed = timestamp - effect.createdAt;
+        const p = Math.min(1, elapsed / effect.duration);
+        const alpha = 1 - p;
+        const radius = 12 + p * 28;
+        const pos = worldToScreen(effect.worldX, effect.worldY, cameraX, cameraY);
+
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        ctx.beginPath();
+        ctx.arc(pos.x, pos.y, radius, 0, Math.PI * 2);
+        ctx.strokeStyle = effect.color;
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        if (effect.type === "wheel") {
+          drawWheelVector(pos.x, pos.y, effect.deltaX, effect.deltaY, effect.color, alpha);
+        }
+
+        if (effect.label) {
+          ctx.fillStyle = effect.color;
+          ctx.font = "bold 13px Arial";
+          ctx.fillText(effect.label, pos.x + 14, pos.y + 4);
+        }
+        ctx.restore();
+      }
+    }
+
+    function drawOverlay(timestamp) {
+      const remaining = statusFlash.until - timestamp;
+      if (remaining > 0) {
+        ctx.save();
+        ctx.globalAlpha = Math.min(1, remaining / 1200);
+        ctx.fillStyle = statusFlash.color;
+        ctx.fillRect(16, 16, 240, 36);
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "bold 14px Arial";
+        ctx.fillText(statusFlash.label, 28, 39);
+        ctx.restore();
+      }
+
+      ctx.fillStyle = "#333333";
+      ctx.font = "12px Arial";
+      ctx.fillText("Magic Mouse wheel X/Y moves the centered cursor through world space. Mouse motion creates color pulses.", 16, canvas.height - 16);
+    }
+
+    function render(timestamp) {
+      const state = getCurrentState();
+      const cameraX = state.worldX;
+      const cameraY = state.worldY;
+      const trail = state.trail;
+      const pointerColor = replay.showing ? "#0b5394" : "#1f77b4";
+      const pointerLabel = replay.showing ? "Replay cursor (centered)" : "Live cursor (centered)";
+
+      drawGrid(cameraX, cameraY);
+      drawTrail(trail, cameraX, cameraY, pointerColor);
+      drawEffects(timestamp, cameraX, cameraY);
+      drawCenteredCursor(pointerColor, pointerLabel);
+      drawOverlay(timestamp);
+
+      requestAnimationFrame(render);
+    }
+
+    async function lockPointer() {
+      try {
+        await canvas.requestPointerLock();
+      } catch (err) {
+        console.error("Pointer lock failed:", err);
+        logEvent("pointer_lock_error", { message: String(err) });
+        setStatusFlash("POINTER LOCK ERROR", "#c0392b", 1600);
+      }
+    }
+
+    function applyVisualForEvent(event, isReplay = false) {
+      const state = isReplay ? replay : live;
+
+      if (event.type === "mousemove") {
+        addEffect("mousemove", event.worldX, event.worldY, {
+          color: event.pulseColor || "#17becf",
+          label: `move pulse (${Math.round(event.movementX)}, ${Math.round(event.movementY)})`,
+          deltaX: event.movementX,
+          deltaY: event.movementY,
+          duration: 850
+        });
+      }
+
+      if (event.type === "mousedown") {
+        addEffect("mousedown", event.worldX, event.worldY, {
+          color: "#d62728",
+          label: `${buttonName(event.button)} down`,
+          duration: 900
+        });
+      }
+
+      if (event.type === "mouseup") {
+        addEffect("mouseup", event.worldX, event.worldY, {
+          color: "#2ca02c",
+          label: `${buttonName(event.button)} up`,
+          duration: 900
+        });
+      }
+
+      if (event.type === "wheel") {
+        state.worldX = event.worldX;
+        state.worldY = event.worldY;
+        addTrailPoint(state.trail, state.worldX, state.worldY);
+
+        addEffect("wheel", event.worldX, event.worldY, {
+          color: "#9467bd",
+          label: `${wheelDirectionLabel(event.deltaX, event.deltaY)} (${Math.round(event.deltaX)}, ${Math.round(event.deltaY)})`,
+          deltaX: event.deltaX,
+          deltaY: event.deltaY,
+          duration: 1100
+        });
+      }
+
+      if (event.type === "pointer_lock_start") setStatusFlash("POINTER LOCK ACTIVE", "#ff7f0e");
+      if (event.type === "pointer_lock_end") setStatusFlash("POINTER LOCK RELEASED", "#ff7f0e");
+      if (event.type === "pointer_lock_error") setStatusFlash("POINTER LOCK ERROR", "#c0392b", 1600);
+    }
+
+    function startReplay() {
+      if (!events.length) {
+        alert("No events recorded yet.");
+        return;
+      }
+
+      replay.snapshot = JSON.parse(JSON.stringify(events));
+      replay.speed = Number(speedSelect.value) || 1;
+      replay.active = true;
+      replay.paused = false;
+      replay.showing = true;
+      replay.index = 0;
+      replay.startedAt = nowMs();
+      replay.pausedElapsed = 0;
+      replay.worldX = 0;
+      replay.worldY = 0;
+      replay.trail = [];
+      effectBursts = [];
+      replayStatusEl.textContent = "Playing";
+      setStatusFlash("REPLAY STARTED", "#0b5394");
+      updatePanel();
+    }
+
+    function pauseReplay() {
+      if (!replay.active || replay.paused) return;
+      replay.paused = true;
+      replay.pausedElapsed = nowMs() - replay.startedAt;
+      replayStatusEl.textContent = "Paused";
+      setStatusFlash("REPLAY PAUSED", "#666666");
+    }
+
+    function resumeReplay() {
+      if (!replay.active || !replay.paused) return;
+      replay.paused = false;
+      replay.startedAt = nowMs() - replay.pausedElapsed;
+      replayStatusEl.textContent = "Playing";
+      setStatusFlash("REPLAY RESUMED", "#0b5394");
+    }
+
+    function stopReplay() {
+      replay.active = false;
+      replay.paused = false;
+      replay.showing = false;
+      replay.snapshot = [];
+      replay.index = 0;
+      replay.trail = [];
+      replay.worldX = 0;
+      replay.worldY = 0;
+      replayStatusEl.textContent = "Idle";
+      effectBursts = [];
+      setStatusFlash("REPLAY STOPPED", "#666666");
+      updatePanel();
+    }
+
+    function stepReplay() {
+      if (!replay.active || replay.paused) return;
+
+      const elapsed = (nowMs() - replay.startedAt) * replay.speed;
+      while (replay.index < replay.snapshot.length && replay.snapshot[replay.index].relTime <= elapsed) {
+        const event = replay.snapshot[replay.index];
+        applyVisualForEvent(event, true);
+        replay.index += 1;
+      }
+
+      if (replay.index >= replay.snapshot.length) {
+        replay.active = false;
+        replay.paused = false;
+        replay.showing = true;
+        replayStatusEl.textContent = "Finished";
+        setStatusFlash("REPLAY COMPLETE", "#0b5394", 1600);
+      }
+
+      updatePanel();
+    }
+
+    function liveInputBlocked() {
+      return replay.showing;
+    }
+
+    canvas.addEventListener("click", () => {
+      if (document.pointerLockElement !== canvas) lockPointer();
+    });
+
+    lockButton.addEventListener("click", lockPointer);
+
+    document.addEventListener("pointerlockchange", () => {
+      const locked = document.pointerLockElement === canvas;
+      lockStatus.textContent = locked ? "Locked" : "Unlocked";
+      const type = locked ? "pointer_lock_start" : "pointer_lock_end";
+      logEvent(type);
+      applyVisualForEvent({ type }, false);
+    });
+
+    document.addEventListener("pointerlockerror", () => {
+      logEvent("pointer_lock_error");
+      applyVisualForEvent({ type: "pointer_lock_error" }, false);
+    });
+
+    document.addEventListener("mousemove", (event) => {
+      if (document.pointerLockElement !== canvas) return;
+      if (liveInputBlocked()) return;
+
+      const dx = event.movementX;
+      const dy = event.movementY;
+      totalX += dx;
+      totalY += dy;
+
+      if (dx !== 0 || dy !== 0) {
+        motionPulseCount += 1;
+      }
+
+      const record = {
+        movementX: dx,
+        movementY: dy,
+        worldX: live.worldX,
+        worldY: live.worldY,
+        totalX,
+        totalY,
+        pulseColor: movementPulseColor(dx, dy)
+      };
+
+      logEvent("mousemove", record);
+      applyVisualForEvent({ type: "mousemove", ...record }, false);
+      updatePanel();
+    });
+
+    document.addEventListener("mousedown", (event) => {
+      if (document.pointerLockElement !== canvas) return;
+      if (liveInputBlocked()) return;
+
+      clickCount += 1;
+      const record = {
+        button: event.button,
+        buttons: event.buttons,
+        worldX: live.worldX,
+        worldY: live.worldY
+      };
+      logEvent("mousedown", record);
+      applyVisualForEvent({ type: "mousedown", ...record }, false);
+    });
+
+    document.addEventListener("mouseup", (event) => {
+      if (document.pointerLockElement !== canvas) return;
+      if (liveInputBlocked()) return;
+
+      const record = {
+        button: event.button,
+        buttons: event.buttons,
+        worldX: live.worldX,
+        worldY: live.worldY
+      };
+      logEvent("mouseup", record);
+      applyVisualForEvent({ type: "mouseup", ...record }, false);
+    });
+
+    document.addEventListener("wheel", (event) => {
+      if (document.pointerLockElement !== canvas) return;
+      if (liveInputBlocked()) return;
+
+      event.preventDefault();
+      wheelCount += 1;
+      wheelXTotal += event.deltaX;
+      wheelYTotal += event.deltaY;
+      lastWheelVector = { x: event.deltaX, y: event.deltaY };
+
+      live.worldX += event.deltaX;
+      live.worldY += event.deltaY;
+
+      const record = {
+        deltaX: event.deltaX,
+        deltaY: event.deltaY,
+        deltaZ: event.deltaZ,
+        deltaMode: event.deltaMode,
+        worldX: live.worldX,
+        worldY: live.worldY
+      };
+      logEvent("wheel", record);
+      applyVisualForEvent({ type: "wheel", ...record }, false);
+      updatePanel();
+    }, { passive: false });
+
+    document.addEventListener("contextmenu", (event) => {
+      event.preventDefault();
+    });
+
+    clearButton.addEventListener("click", () => {
+      events = [];
+      recordingStart = null;
+      totalX = 0;
+      totalY = 0;
+      clickCount = 0;
+      motionPulseCount = 0;
+      wheelCount = 0;
+      wheelXTotal = 0;
+      wheelYTotal = 0;
+      lastWheelVector = { x: 0, y: 0 };
+      stopReplay();
+      resetWorldState();
+      setStatusFlash("EVENTS CLEARED", "#666666");
+      updatePanel();
+    });
+
+    resetViewButton.addEventListener("click", () => {
+      resetWorldState();
+      setStatusFlash("VIEW RESET", "#666666");
+      updatePanel();
+    });
+
+    downloadButton.addEventListener("click", () => {
+      const blob = new Blob([JSON.stringify(events, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "magic_mouse_wheel_guided_pulse_events.json";
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    replayButton.addEventListener("click", startReplay);
+    pauseReplayButton.addEventListener("click", pauseReplay);
+    resumeReplayButton.addEventListener("click", resumeReplay);
+    stopReplayButton.addEventListener("click", stopReplay);
+
+    speedSelect.addEventListener("change", () => {
+      if (replay.active && !replay.paused) {
+        const elapsedBefore = (nowMs() - replay.startedAt) * replay.speed;
+        replay.speed = Number(speedSelect.value) || 1;
+        replay.startedAt = nowMs() - (elapsedBefore / replay.speed);
+      }
+    });
+
+    window.addEventListener("resize", resizeCanvas);
+
+    function replayLoop() {
+      stepReplay();
+      requestAnimationFrame(replayLoop);
+    }
+
+    resizeCanvas();
+    updatePanel();
+    requestAnimationFrame(render);
+    requestAnimationFrame(replayLoop);
+  </script>
+</body>
+</html>

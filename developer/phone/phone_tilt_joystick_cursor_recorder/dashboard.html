@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Phone Tilt Joystick 3D Cursor Dashboard</title>
+<style>
+:root{--bg:#f7f7f4;--card:#fff;--ink:#1d1d1f;--muted:#666;--line:#ddd;--accent:#2457ff;--good:#047857;--bad:#b91c1c;--warn:#92400e;}
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+main{max-width:1240px;margin:0 auto;padding:18px}h1{font-size:25px;margin:8px 0 4px}h2{font-size:17px;margin:0 0 10px}p{color:var(--muted);line-height:1.35}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;margin:12px 0;box-shadow:0 1px 8px rgba(0,0,0,.04)}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}button,input,select{font:inherit;border-radius:12px;border:1px solid var(--line);padding:10px 12px;background:#fff}button{cursor:pointer;font-weight:700}button.primary{background:var(--accent);border-color:var(--accent);color:#fff}button.good{background:#dcfce7;border-color:#bbf7d0;color:var(--good)}button.danger{background:#fee2e2;border-color:#fecaca;color:var(--bad)}button.warn{background:#fef3c7;border-color:#fde68a;color:var(--warn)}
+.layout{display:grid;grid-template-columns:1.7fr .9fr;gap:12px}.status{font-weight:800}.small{font-size:13px;color:var(--muted)}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.metric{padding:9px;border:1px solid var(--line);border-radius:14px;background:#fafafa;min-height:58px}.metric b{display:block;font-size:12px;color:var(--muted);margin-bottom:3px}.metric span{font-variant-numeric:tabular-nums;font-size:18px}canvas{width:100%;border:1px solid var(--line);border-radius:16px;background:#fff;display:block}.scene{height:660px}.chart{height:220px}.stick{height:220px}code{background:#eee;padding:2px 6px;border-radius:7px}.pill{display:inline-block;padding:3px 8px;border-radius:999px;border:1px solid var(--line);background:#fafafa;font-size:12px;margin:2px}.slider{width:180px;accent-color:#2457ff}.downloads a{margin-right:12px}.side{position:sticky;top:8px;align-self:start}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.grid{grid-template-columns:repeat(2,1fr)}.scene{height:520px}.side{position:static}}
+</style>
+</head>
+<body>
+<main>
+<h1>Phone Tilt Joystick 3D Cursor Dashboard</h1>
+<p>The phone acts like a joystick. Tilt left/right to move on X, tilt forward/back to move on Y, and use twist or lift mode for Z. Returning the phone to neutral slows the cursor to a stop.</p>
+<div class="layout">
+<section class="card">
+  <h2>3D cursor scene</h2>
+  <canvas id="scene" class="scene" width="1200" height="760"></canvas>
+  <p class="small">The cursor is camera-centered. The grid/world moves behind the cursor. Drag the scene to orbit the view; double-click to recenter the viewing angle.</p>
+</section>
+<aside class="side">
+  <section class="card">
+    <h2>Connection</h2>
+    <div class="row"><button id="refreshBtn" class="primary">Refresh state</button><span class="status" id="phoneStatus">unknown</span></div>
+    <p class="small">Phone page: <code id="phoneUrl">/phone.html</code></p>
+    <p class="small">Recording: <b id="recStatus">off</b> · Samples: <b id="sampleCount">0</b> · Events: <b id="eventCount">0</b></p>
+    <p class="downloads" id="downloads"></p>
+  </section>
+  <section class="card">
+    <h2>Tilt joystick controls</h2>
+    <div class="row"><button id="calibrateBtn" class="good">Set neutral tilt</button><button id="resetCursorBtn" class="warn">Reset cursor</button><button id="clearTrailBtn">Clear trail</button><button id="saveBtn">Save now</button></div>
+    <p class="small">Speed <input id="speedGain" class="slider" type="range" min="0.5" max="12" step="0.1" value="4.2"> <b id="speedGainVal">4.2</b></p>
+    <p class="small">Dead zone <input id="deadZone" class="slider" type="range" min="0" max="18" step="0.5" value="3.5"> <b id="deadZoneVal">3.5°</b></p>
+    <p class="small">Smoothing <input id="smoothing" class="slider" type="range" min="0" max="0.95" step="0.01" value="0.55"> <b id="smoothingVal">0.55</b></p>
+    <p class="small">Brake <input id="brake" class="slider" type="range" min="0.70" max="0.995" step="0.001" value="0.88"> <b id="brakeVal">0.88</b></p>
+    <p class="small">Z mode <select id="zMode"><option value="twist">Twist phone controls Z</option><option value="lift">Lift/shake controls Z</option><option value="tiltcombo">Forward tilt + twist controls Z</option><option value="off">Z locked</option></select></p>
+  </section>
+  <section class="card">
+    <h2>Joystick pad</h2>
+    <canvas id="stick" class="stick" width="540" height="300"></canvas>
+    <p class="small">Center dot = neutral. Blue dot = current phone tilt after calibration and dead zone.</p>
+  </section>
+  <section class="card">
+    <h2>Position</h2>
+    <div class="grid">
+      <div class="metric"><b>X</b><span id="px">0.00</span></div><div class="metric"><b>Y</b><span id="py">0.00</span></div><div class="metric"><b>Z</b><span id="pz">0.00</span></div>
+      <div class="metric"><b>vX</b><span id="vx">0.00</span></div><div class="metric"><b>vY</b><span id="vy">0.00</span></div><div class="metric"><b>vZ</b><span id="vz">0.00</span></div>
+    </div>
+  </section>
+  <section class="card">
+    <h2>Joystick debug</h2>
+    <div class="grid">
+      <div class="metric"><b>joy X</b><span id="jx">0.00</span></div><div class="metric"><b>joy Y</b><span id="jy">0.00</span></div><div class="metric"><b>joy Z</b><span id="jz">0.00</span></div>
+      <div class="metric"><b>beta</b><span id="beta">0.00</span></div><div class="metric"><b>gamma</b><span id="gamma">0.00</span></div><div class="metric"><b>last dt</b><span id="dtv">0.000</span></div>
+    </div>
+  </section>
+</aside>
+</div>
+<section class="card">
+  <h2>Live input values</h2>
+  <div class="grid">
+    <div class="metric"><b>accel X</b><span id="ax">0.00</span></div>
+    <div class="metric"><b>accel Y</b><span id="ay">0.00</span></div>
+    <div class="metric"><b>accel Z</b><span id="az">0.00</span></div>
+    <div class="metric"><b>gyro α/X</b><span id="ra">0.00</span></div>
+    <div class="metric"><b>gyro β/Y</b><span id="rb">0.00</span></div>
+    <div class="metric"><b>gyro γ/Z</b><span id="rg">0.00</span></div>
+    <div class="metric"><b>orient α</b><span id="oa">0.00</span></div>
+    <div class="metric"><b>orient β</b><span id="ob">0.00</span></div>
+    <div class="metric"><b>orient γ</b><span id="og">0.00</span></div>
+  </div>
+</section>
+<section class="card">
+  <h2>Input stream</h2>
+  <canvas id="chart" class="chart" width="1200" height="250"></canvas>
+</section>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const scene=$('scene'), ctx=scene.getContext('2d');
+const chart=$('chart'), cctx=chart.getContext('2d');
+const stick=$('stick'), sctx=stick.getContext('2d');
+let lastSeq=0,phoneAlive=false;
+let latest={a:{x:0,y:0,z:0},ag:{x:0,y:0,z:0},r:{alpha:0,beta:0,gamma:0},o:{alpha:0,beta:0,gamma:0}};
+let cursor={x:0,y:0,z:0,vx:0,vy:0,vz:0};
+let lastSampleTime=null, trail=[], inputTrace=[];
+let joy={x:0,y:0,z:0,rawX:0,rawY:0,rawZ:0};
+let neutral={alpha:0,beta:0,gamma:0,set:false};
+let yaw=-0.72,pitch=0.55,drag=false,lastMouse=null;
+const camera={x:0,y:0,z:0,follow:0.13,dist:900,scale:38};
+function f(v){return Number.isFinite(Number(v))?Number(v):0}function fmt(v){return f(v).toFixed(2)}
+function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
+function angleDiff(a,b){let d=(a-b+540)%360-180;return d}
+function getAccelParts(sample){const dm=sample.devicemotion||{};const a=dm.acceleration||{};const ag=dm.accelerationIncludingGravity||{};const generic=sample.generic||{};const lin=generic.linear||{};const gacc=generic.accel||{};return {linear:{x:f(a.x ?? lin.x),y:f(a.y ?? lin.y),z:f(a.z ?? lin.z)},gravity:{x:f(ag.x ?? gacc.x),y:f(ag.y ?? gacc.y),z:f(ag.z ?? gacc.z)}}}
+function getRot(sample){const dm=sample.devicemotion||{};const r=dm.rotationRate||{};const generic=(sample.generic&&sample.generic.gyro)||{};return {alpha:f(r.alpha ?? generic.x),beta:f(r.beta ?? generic.y),gamma:f(r.gamma ?? generic.z)}}
+function getOri(sample){const o=sample.deviceorientation||{};return {alpha:f(o.alpha),beta:f(o.beta),gamma:f(o.gamma)}}
+async function getState(){const res=await fetch('/api/state?lastSeq='+lastSeq,{cache:'no-store'});return await res.json()}
+async function post(path,data={}){const res=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data),cache:'no-store'});return await res.json()}
+function updateControls(){['speedGain','deadZone','smoothing','brake'].forEach(id=>$(id+'Val').textContent=$(id).value+(id==='deadZone'?'°':''))}
+['speedGain','deadZone','smoothing','brake'].forEach(id=>$(id).addEventListener('input',updateControls));updateControls();
+function normalizeTilt(value, deadZoneDeg){const sign=value<0?-1:1;const mag=Math.abs(value);if(mag<deadZoneDeg)return 0;return sign*clamp((mag-deadZoneDeg)/(45-deadZoneDeg),0,1)}
+function integrate(sample){
+ const sampleT=f(sample.t)||Date.now();let dt=lastSampleTime?(sampleT-lastSampleTime)/1000:1/60;lastSampleTime=sampleT;if(!Number.isFinite(dt)||dt<=0||dt>0.15)dt=1/60;
+ const parts=getAccelParts(sample), a=parts.linear, ag=parts.gravity, r=getRot(sample), o=getOri(sample); latest={a,ag,r,o};
+ if(!neutral.set && (Math.abs(o.beta)>0.01 || Math.abs(o.gamma)>0.01 || Math.abs(o.alpha)>0.01)){neutral={alpha:o.alpha,beta:o.beta,gamma:o.gamma,set:true};}
+ const dz=f($('deadZone').value), speed=f($('speedGain').value), smooth=f($('smoothing').value), brake=f($('brake').value);
+ const betaDelta=o.beta-neutral.beta;          // forward/back tilt
+ const gammaDelta=o.gamma-neutral.gamma;       // left/right tilt
+ const alphaDelta=angleDiff(o.alpha,neutral.alpha);
+ let targetX=normalizeTilt(gammaDelta,dz);
+ let targetY=normalizeTilt(betaDelta,dz);
+ let targetZ=0;
+ const zMode=$('zMode').value;
+ if(zMode==='twist') targetZ=normalizeTilt(alphaDelta,dz*1.4);
+ else if(zMode==='lift') targetZ=clamp((a.z||0)/4,-1,1);
+ else if(zMode==='tiltcombo') targetZ=clamp((normalizeTilt(betaDelta,dz)*0.55)+(normalizeTilt(alphaDelta,dz*1.4)*0.75),-1,1);
+ joy.rawX=targetX; joy.rawY=targetY; joy.rawZ=targetZ;
+ joy.x=joy.x*smooth+targetX*(1-smooth); joy.y=joy.y*smooth+targetY*(1-smooth); joy.z=joy.z*smooth+targetZ*(1-smooth);
+ // Tilt joystick mode: orientation maps to desired velocity rather than acceleration force.
+ // Center/neutral tilt creates a desired velocity of zero, so the cursor brakes and stops.
+ const desiredVx=joy.x*speed; const desiredVy=joy.y*speed; const desiredVz=joy.z*speed*0.75;
+ const response=1-Math.pow(0.08,dt*5.0);
+ cursor.vx += (desiredVx-cursor.vx)*response;
+ cursor.vy += (desiredVy-cursor.vy)*response;
+ cursor.vz += (desiredVz-cursor.vz)*response;
+ if(Math.abs(joy.x)+Math.abs(joy.y)+Math.abs(joy.z)<0.01){cursor.vx*=Math.pow(brake,dt*60);cursor.vy*=Math.pow(brake,dt*60);cursor.vz*=Math.pow(brake,dt*60)}
+ cursor.x+=cursor.vx*dt*12;cursor.y+=cursor.vy*dt*12;cursor.z+=cursor.vz*dt*12;
+ const max=260;['x','y','z'].forEach(k=>{if(cursor[k]>max){cursor[k]=max;cursor['v'+k]*=-0.15}if(cursor[k]<-max){cursor[k]=-max;cursor['v'+k]*=-0.15}});
+ trail.push({x:cursor.x,y:cursor.y,z:cursor.z,t:sampleT});if(trail.length>1600)trail.splice(0,trail.length-1600);
+ inputTrace.push({x:joy.x,y:joy.y,z:joy.z,b:o.beta,g:o.gamma});if(inputTrace.length>360)inputTrace.shift();
+ $('jx').textContent=fmt(joy.x);$('jy').textContent=fmt(joy.y);$('jz').textContent=fmt(joy.z);$('beta').textContent=fmt(betaDelta);$('gamma').textContent=fmt(gammaDelta);$('dtv').textContent=dt.toFixed(3);
+}
+async function poll(){try{const st=await getState();phoneAlive=st.phoneAlive;lastSeq=st.lastSeq||lastSeq;$('phoneStatus').textContent=phoneAlive?'phone connected':'phone not connected';$('recStatus').textContent=st.recordingActive?'on':'off';$('sampleCount').textContent=st.sampleCount||0;$('eventCount').textContent=st.eventCount||0;if(st.lastSavedFiles&&Object.keys(st.lastSavedFiles).length){$('downloads').innerHTML=`<a href="${st.lastSavedFiles.json}" download>JSON</a><a href="${st.lastSavedFiles.csv}" download>CSV</a>`}(st.events||[]).forEach(e=>{if(e.eventType==='sample')integrate(e)});}catch(e){$('phoneStatus').textContent='server unavailable'}setTimeout(poll,55)}
+function project(p){const x=p.x-camera.x,y=p.y-camera.y,z=p.z-camera.z;const cy=Math.cos(yaw),sy=Math.sin(yaw),cp=Math.cos(pitch),sp=Math.sin(pitch);const x1=cy*x-sy*z,z1=sy*x+cy*z;const y1=cp*y-sp*z1,z2=sp*y+cp*z1;const depth=1/(1+(z2+camera.dist)/1400);return{x:scene.width/2+x1*camera.scale*depth,y:scene.height/2-y1*camera.scale*depth,s:depth,z:z2}}
+function line3(a,b,style,w=1){const A=project(a),B=project(b);ctx.strokeStyle=style;ctx.lineWidth=w;ctx.beginPath();ctx.moveTo(A.x,A.y);ctx.lineTo(B.x,B.y);ctx.stroke()}
+function drawScene(){ctx.clearRect(0,0,scene.width,scene.height);camera.x+=(cursor.x-camera.x)*camera.follow;camera.y+=(cursor.y-camera.y)*camera.follow;camera.z+=(cursor.z-camera.z)*camera.follow;ctx.fillStyle='#fbfbf8';ctx.fillRect(0,0,scene.width,scene.height);const range=300,step=20;for(let i=-range;i<=range;i+=step){const major=i%100===0;line3({x:i,y:-range,z:0},{x:i,y:range,z:0},major?'#d7d7d0':'#ecece6',major?1.4:0.8);line3({x:-range,y:i,z:0},{x:range,y:i,z:0},major?'#d7d7d0':'#ecece6',major?1.4:0.8);line3({x:i,y:0,z:-range},{x:i,y:0,z:range},major?'#e0e0da':'#f0f0eb',major?1.1:0.7);line3({x:0,y:i,z:-range},{x:0,y:i,z:range},major?'#e0e0da':'#f0f0eb',major?1.1:0.7)}line3({x:-range,y:0,z:0},{x:range,y:0,z:0},'#b91c1c',3);line3({x:0,y:-range,z:0},{x:0,y:range,z:0},'#047857',3);line3({x:0,y:0,z:-range},{x:0,y:0,z:range},'#2457ff',3);ctx.font='16px system-ui';ctx.fillStyle='#b91c1c';let px=project({x:range,y:0,z:0});ctx.fillText('X',px.x+6,px.y);ctx.fillStyle='#047857';px=project({x:0,y:range,z:0});ctx.fillText('Y',px.x+6,px.y);ctx.fillStyle='#2457ff';px=project({x:0,y:0,z:range});ctx.fillText('Z',px.x+6,px.y);if(trail.length>1){ctx.lineWidth=2;for(let i=1;i<trail.length;i++){const A=project(trail[i-1]),B=project(trail[i]);ctx.globalAlpha=Math.max(0.08,i/trail.length);ctx.strokeStyle='#1d1d1f';ctx.beginPath();ctx.moveTo(A.x,A.y);ctx.lineTo(B.x,B.y);ctx.stroke()}ctx.globalAlpha=1}const P=project(cursor),speed=Math.hypot(cursor.vx,cursor.vy,cursor.vz);ctx.beginPath();ctx.arc(P.x,P.y,Math.max(8,17*P.s),0,Math.PI*2);ctx.fillStyle=phoneAlive?'#2457ff':'#999';ctx.fill();ctx.lineWidth=3;ctx.strokeStyle='#111';ctx.stroke();const vScale=11;line3(cursor,{x:cursor.x+cursor.vx*vScale,y:cursor.y+cursor.vy*vScale,z:cursor.z+cursor.vz*vScale},'#111',3);ctx.fillStyle='rgba(255,255,255,.9)';ctx.fillRect(18,18,410,120);ctx.strokeStyle='#ddd';ctx.strokeRect(18,18,410,120);ctx.fillStyle='#111';ctx.font='15px ui-monospace,monospace';ctx.fillText(`cursor: x ${fmt(cursor.x)}  y ${fmt(cursor.y)}  z ${fmt(cursor.z)}`,34,45);ctx.fillText(`joystick: x ${fmt(joy.x)}  y ${fmt(joy.y)}  z ${fmt(joy.z)}`,34,70);ctx.fillText(`speed: ${fmt(speed)}  trail: ${trail.length}`,34,95);ctx.fillText(`phone: ${phoneAlive?'connected':'not connected'}  neutral: ${neutral.set?'set':'waiting'}`,34,120);$('px').textContent=fmt(cursor.x);$('py').textContent=fmt(cursor.y);$('pz').textContent=fmt(cursor.z);$('vx').textContent=fmt(cursor.vx);$('vy').textContent=fmt(cursor.vy);$('vz').textContent=fmt(cursor.vz);$('ax').textContent=fmt(latest.a.x);$('ay').textContent=fmt(latest.a.y);$('az').textContent=fmt(latest.a.z);$('ra').textContent=fmt(latest.r.alpha);$('rb').textContent=fmt(latest.r.beta);$('rg').textContent=fmt(latest.r.gamma);$('oa').textContent=fmt(latest.o.alpha);$('ob').textContent=fmt(latest.o.beta);$('og').textContent=fmt(latest.o.gamma);requestAnimationFrame(drawScene)}
+function drawStick(){sctx.clearRect(0,0,stick.width,stick.height);sctx.fillStyle='#fff';sctx.fillRect(0,0,stick.width,stick.height);const cx=stick.width/2,cy=stick.height/2,R=Math.min(stick.width,stick.height)*0.38;sctx.strokeStyle='#ddd';sctx.lineWidth=2;sctx.beginPath();sctx.arc(cx,cy,R,0,Math.PI*2);sctx.stroke();sctx.strokeStyle='#eee';sctx.beginPath();sctx.moveTo(cx-R,cy);sctx.lineTo(cx+R,cy);sctx.moveTo(cx,cy-R);sctx.lineTo(cx,cy+R);sctx.stroke();sctx.fillStyle='#111';sctx.beginPath();sctx.arc(cx,cy,4,0,Math.PI*2);sctx.fill();const x=cx+joy.x*R,y=cy+joy.y*R;sctx.fillStyle='#2457ff';sctx.beginPath();sctx.arc(x,y,14,0,Math.PI*2);sctx.fill();sctx.strokeStyle='#111';sctx.lineWidth=2;sctx.stroke();sctx.fillStyle='#111';sctx.font='14px system-ui';sctx.fillText(`X ${fmt(joy.x)}  Y ${fmt(joy.y)}  Z ${fmt(joy.z)}`,16,24);requestAnimationFrame(drawStick)}
+function drawChart(){cctx.clearRect(0,0,chart.width,chart.height);cctx.fillStyle='#fff';cctx.fillRect(0,0,chart.width,chart.height);cctx.strokeStyle='#eee';for(let y=40;y<chart.height;y+=40){cctx.beginPath();cctx.moveTo(0,y);cctx.lineTo(chart.width,y);cctx.stroke()}const keys=[['x','#111'],['y','#555'],['z','#999']];keys.forEach(([k,col])=>{cctx.strokeStyle=col;cctx.lineWidth=2;cctx.beginPath();inputTrace.forEach((d,i)=>{const x=i/(360-1)*chart.width;const y=chart.height/2-d[k]*(chart.height*0.38);if(i===0)cctx.moveTo(x,y);else cctx.lineTo(x,y)});cctx.stroke()});cctx.fillStyle='#111';cctx.font='13px system-ui';cctx.fillText('joystick stream: X black · Y gray · Z light gray',16,22);requestAnimationFrame(drawChart)}
+scene.addEventListener('mousedown',e=>{drag=true;lastMouse={x:e.clientX,y:e.clientY}});window.addEventListener('mouseup',()=>drag=false);window.addEventListener('mousemove',e=>{if(!drag)return;const dx=e.clientX-lastMouse.x,dy=e.clientY-lastMouse.y;lastMouse={x:e.clientX,y:e.clientY};yaw+=dx*0.006;pitch=Math.max(-1.2,Math.min(1.2,pitch+dy*0.006));});scene.addEventListener('dblclick',()=>{yaw=-0.72;pitch=0.55;camera.x=cursor.x;camera.y=cursor.y;camera.z=cursor.z});
+$('calibrateBtn').onclick=()=>{neutral={alpha:latest.o.alpha,beta:latest.o.beta,gamma:latest.o.gamma,set:true};joy={x:0,y:0,z:0,rawX:0,rawY:0,rawZ:0};};
+$('resetCursorBtn').onclick=()=>{cursor={x:0,y:0,z:0,vx:0,vy:0,vz:0};camera.x=camera.y=camera.z=0;trail=[];lastSampleTime=null;};
+$('clearTrailBtn').onclick=()=>trail=[];$('refreshBtn').onclick=()=>{lastSeq=Math.max(0,lastSeq-1)};$('saveBtn').onclick=async()=>{const r=await post('/api/save_now',{});if(r.files)$('downloads').innerHTML=`<a href="${r.files.json}" download>JSON</a><a href="${r.files.csv}" download>CSV</a>`};
+$('phoneUrl').textContent=location.origin+'/phone.html';poll();drawScene();drawStick();drawChart();
+</script>
+</body>
+</html>

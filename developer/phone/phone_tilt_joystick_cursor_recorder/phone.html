@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Phone 3D Cursor Movement Recorder</title>
+<style>
+  :root { --bg:#f7f7f4; --card:#ffffff; --ink:#1d1d1f; --muted:#666; --line:#ddd; --accent:#2457ff; --good:#047857; --bad:#b91c1c; --warn:#92400e; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; background:var(--bg); color:var(--ink); }
+  main { max-width:860px; margin:0 auto; padding:18px; }
+  h1 { font-size:24px; margin:8px 0 4px; } h2 { margin:0 0 10px; font-size:18px; }
+  p { color:var(--muted); line-height:1.35; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:18px; padding:16px; margin:12px 0; box-shadow:0 1px 8px rgba(0,0,0,.04); }
+  .row { display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+  button, input, select { font:inherit; border-radius:12px; border:1px solid var(--line); padding:11px 13px; background:white; }
+  button { cursor:pointer; font-weight:700; }
+  button.primary { background:var(--accent); color:white; border-color:var(--accent); }
+  button.danger { background:#fee2e2; border-color:#fecaca; color:var(--bad); }
+  button.good { background:#dcfce7; border-color:#bbf7d0; color:var(--good); }
+  button.warn { background:#fef3c7; border-color:#fde68a; color:var(--warn); }
+  button:disabled { opacity:.45; cursor:not-allowed; }
+  input { width:100%; max-width:280px; }
+  .status { font-weight:800; }
+  .grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+  .metric { padding:10px; border:1px solid var(--line); border-radius:14px; background:#fafafa; min-height:66px; }
+  .metric b { display:block; font-size:12px; color:var(--muted); margin-bottom:4px; }
+  .metric span { font-variant-numeric:tabular-nums; font-size:18px; }
+  canvas { width:100%; height:250px; border:1px solid var(--line); border-radius:14px; background:#fff; display:block; }
+  code, pre { background:#eee; padding:2px 6px; border-radius:7px; }
+  pre { white-space:pre-wrap; padding:10px; max-height:210px; overflow:auto; }
+  .small { font-size:13px; color:var(--muted); }
+  .pill { display:inline-block; padding:3px 8px; border-radius:999px; border:1px solid var(--line); background:#fafafa; font-size:12px; margin:2px; }
+  @media (max-width:700px){ .grid{grid-template-columns:1fr 1fr;} }
+</style>
+</head>
+<body>
+<main>
+  <h1>Phone Movement Recorder</h1>
+  <p>Android/Samsung sensor transmitter. The computer dashboard converts acceleration, rotation-rate, and orientation data into a 3D cursor position. No phone body is visualized on the dashboard.</p>
+
+  <section class="card">
+    <h2>Connection</h2>
+    <div class="row">
+      <button id="connectBtn" class="primary">Connect to computer</button>
+      <button id="testBtn">Test server</button>
+      <span id="status" class="status">Not connected</span>
+    </div>
+    <p class="small">Current page: <code id="pageUrl"></code></p>
+    <p class="small">For Samsung/Android: in Chrome, check <b>Settings → Site settings → Motion sensors</b> and make sure it is allowed. Also make sure Android quick setting/developer tile <b>Sensors Off</b> is not enabled.</p>
+    <pre id="log"></pre>
+  </section>
+
+  <section class="card">
+    <h2>Sensors</h2>
+    <div class="row">
+      <button id="permBtn" class="warn">Enable sensors</button>
+      <button id="diagBtn">Run sensor diagnostic</button>
+      <button id="demoBtn">Send demo motion</button>
+      <span>Sensors: <b id="sensorStatus">off</b></span>
+    </div>
+    <p class="small">Event counts: motion <b id="motionEvents">0</b> · orientation <b id="orientEvents">0</b> · generic <b id="genericEvents">0</b> · last real event <b id="lastEventAge">never</b></p>
+    <div id="caps" class="small"></div>
+  </section>
+
+  <section class="card">
+    <h2>Recording</h2>
+    <div class="row">
+      <input id="recordingName" value="movement" aria-label="Recording name" />
+      <button id="startBtn" class="good" disabled>Start recording</button>
+      <button id="markBtn" disabled>Add marker</button>
+      <button id="stopBtn" class="danger" disabled>Stop + save</button>
+    </div>
+    <p class="small">Samples sent: <b id="sampleCount">0</b> · Local rate: <b id="rate">0</b> Hz · Last server ack: <b id="ack">none</b></p>
+  </section>
+
+
+
+  <section class="card">
+    <h2>Local sensor movement estimate</h2>
+    <div class="row">
+      <button id="resetGridBtn">Reset grid position</button>
+      <span>Grid X: <b id="gridX">0.00</b></span>
+      <span>Grid Y: <b id="gridY">0.00</b></span>
+      <span>Speed: <b id="gridSpeed">0.00</b></span>
+    </div>
+    <p class="small">The dashboard uses this incoming sensor stream to move a 3D cursor. Position is estimated by integrating motion data, so drift is normal; reset as needed.</p>
+  </section>
+
+  <section class="card">
+    <h2>Live values</h2>
+    <div class="grid">
+      <div class="metric"><b>accel X</b><span id="ax">0.00</span></div>
+      <div class="metric"><b>accel Y</b><span id="ay">0.00</span></div>
+      <div class="metric"><b>accel Z</b><span id="az">0.00</span></div>
+      <div class="metric"><b>linear X</b><span id="lx">0.00</span></div>
+      <div class="metric"><b>linear Y</b><span id="ly">0.00</span></div>
+      <div class="metric"><b>linear Z</b><span id="lz">0.00</span></div>
+      <div class="metric"><b>gyro α/X</b><span id="ra">0.00</span></div>
+      <div class="metric"><b>gyro β/Y</b><span id="rb">0.00</span></div>
+      <div class="metric"><b>gyro γ/Z</b><span id="rg">0.00</span></div>
+      <div class="metric"><b>orient α</b><span id="oa">0.00</span></div>
+      <div class="metric"><b>orient β</b><span id="ob">0.00</span></div>
+      <div class="metric"><b>orient γ</b><span id="og">0.00</span></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Phone trace</h2>
+    <canvas id="trace" width="900" height="420"></canvas>
+  </section>
+</main>
+<script>
+const $ = id => document.getElementById(id);
+$('pageUrl').textContent = location.href;
+const canvas = $('trace');
+const ctx = canvas.getContext('2d');
+let connected = false;
+let sensorsReady = false;
+let recording = false;
+let count = 0;
+let motionEvents = 0;
+let orientEvents = 0;
+let genericEvents = 0;
+let lastRealEventAt = 0;
+let lastMotion = null;
+let lastOrientation = null;
+let genericState = {accel:null, linear:null, gyro:null, orientation:null};
+let startTime = 0;
+let lastSend = 0;
+let minIntervalMs = 30;
+let trace = [];
+let rateSamples = 0;
+let lastRateTime = performance.now();
+let heartbeatTimer = null;
+let demoTimer = null;
+let wakeLock = null;
+let gridPos = {x:0, y:0, vx:0, vy:0, lastT:0};
+
+function log(s){ const line = `[${new Date().toLocaleTimeString()}] ${s}\n`; $('log').textContent = line + $('log').textContent.slice(0,2600); }
+function setStatus(s){ $('status').textContent = s; }
+function fmt(v){ return Number.isFinite(Number(v)) ? Number(v).toFixed(2) : '0.00'; }
+function n(v){ return Number.isFinite(Number(v)) ? Number(v) : null; }
+async function post(path, data={}){
+  const res = await fetch(path, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data), cache:'no-store'});
+  if(!res.ok) throw new Error(`${path} HTTP ${res.status}`);
+  return await res.json();
+}
+async function get(path){
+  const res = await fetch(path, {cache:'no-store'});
+  if(!res.ok) throw new Error(`${path} HTTP ${res.status}`);
+  return await res.json();
+}
+function updateButtons(){
+  $('startBtn').disabled = !connected || !sensorsReady || recording;
+  $('markBtn').disabled = !connected || !recording;
+  $('stopBtn').disabled = !connected || !recording;
+}
+function showCaps(){
+  const names = ['DeviceMotionEvent','DeviceOrientationEvent','Accelerometer','LinearAccelerationSensor','Gyroscope','AbsoluteOrientationSensor','RelativeOrientationSensor'];
+  $('caps').innerHTML = names.map(k => `<span class="pill">${k}: ${k in window ? 'yes' : 'no'}</span>`).join(' ')
+    + `<br><span class="pill">protocol: ${location.protocol}</span><span class="pill">host: ${location.hostname}</span><span class="pill">secureContext: ${window.isSecureContext ? 'yes' : 'no'}</span>`;
+}
+showCaps();
+setInterval(()=>{
+  $('motionEvents').textContent = motionEvents;
+  $('orientEvents').textContent = orientEvents;
+  $('genericEvents').textContent = genericEvents;
+  $('lastEventAge').textContent = lastRealEventAt ? `${Math.round((Date.now()-lastRealEventAt)/1000)}s ago` : 'never';
+}, 1000);
+async function testServer(){
+  try { const r = await get('/api/ping'); log('Server test OK: ' + JSON.stringify(r)); setStatus('Server reachable'); }
+  catch(err){ log('Server test failed: ' + err.message); setStatus('Server test failed'); }
+}
+async function connect(){
+  try {
+    setStatus('Connecting...');
+    const r = await post('/api/phone_hello', {href:location.href, userAgent:navigator.userAgent, secureContext:window.isSecureContext});
+    connected = !!r.ok;
+    setStatus(connected ? 'Connected' : 'Not connected');
+    log('Connect response: ' + JSON.stringify(r));
+    if(heartbeatTimer) clearInterval(heartbeatTimer);
+    heartbeatTimer = setInterval(async()=>{ try { await post('/api/heartbeat', {}); } catch(e){ connected=false; setStatus('Heartbeat failed'); updateButtons(); } }, 3000);
+    updateButtons();
+  } catch(err) {
+    connected = false; setStatus('Connection error'); log('Connect failed: ' + err.message); updateButtons();
+  }
+}
+async function requestWakeLock(){
+  try { if('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen'); } catch(e) {}
+}
+async function enableSensors(){
+  await requestWakeLock();
+  try {
+    if(!window.isSecureContext) log('Warning: this page is not a secure context. Android Chrome may block Generic Sensor APIs on HTTP LAN pages. Classic devicemotion may also be blocked by site settings.');
+    if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+      const p = await DeviceMotionEvent.requestPermission();
+      log('Motion permission: ' + p);
+      if (p !== 'granted') { setStatus('Motion permission denied'); return; }
+    }
+    if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+      const p = await DeviceOrientationEvent.requestPermission();
+      log('Orientation permission: ' + p);
+      if (p !== 'granted') { setStatus('Orientation permission denied'); return; }
+    }
+    window.addEventListener('devicemotion', onMotion, {passive:true});
+    window.addEventListener('deviceorientation', onOrientation, {passive:true});
+    startGenericSensors();
+    sensorsReady = true;
+    $('sensorStatus').textContent = 'enabled / waiting for events';
+    log('Sensor listeners enabled. Move, tilt, and rotate the phone for 5 seconds. If event counts stay 0, browser/OS is blocking sensors.');
+    setTimeout(()=>{
+      if(motionEvents===0 && orientEvents===0 && genericEvents===0) log('No sensor events received. On Galaxy A15/Chrome, check Chrome Settings > Site settings > Motion sensors; also check Android Sensors Off is disabled. If still 0, use HTTPS.');
+      else if(allLiveZero()) log('Events are arriving but values are zero/null. This usually means sensors are blocked by Android/Samsung privacy settings or the device/browser is exposing events without sensor data.');
+    }, 5500);
+    updateButtons();
+  } catch (err) { setStatus('Sensor error'); log('Sensor error: ' + err.message); }
+}
+function startGenericSensors(){
+  const opts = {frequency: 60};
+  try {
+    if('Accelerometer' in window) {
+      const s = new Accelerometer(opts);
+      s.addEventListener('reading', ()=>{ genericEvents++; lastRealEventAt=Date.now(); genericState.accel={x:n(s.x),y:n(s.y),z:n(s.z)}; updateLinearAndAccelUI(); maybeSend(); });
+      s.addEventListener('error', e=>log('Accelerometer error: ' + (e.error && e.error.message || e.message || e.name)));
+      s.start(); log('Generic Accelerometer started.');
+    }
+  } catch(e){ log('Generic Accelerometer unavailable: ' + e.message); }
+  try {
+    if('LinearAccelerationSensor' in window) {
+      const s = new LinearAccelerationSensor(opts);
+      s.addEventListener('reading', ()=>{ genericEvents++; lastRealEventAt=Date.now(); genericState.linear={x:n(s.x),y:n(s.y),z:n(s.z)}; updateLinearAndAccelUI(); maybeSend(); });
+      s.addEventListener('error', e=>log('LinearAccelerationSensor error: ' + (e.error && e.error.message || e.message || e.name)));
+      s.start(); log('Generic LinearAccelerationSensor started.');
+    }
+  } catch(e){ log('Generic LinearAccelerationSensor unavailable: ' + e.message); }
+  try {
+    if('Gyroscope' in window) {
+      const s = new Gyroscope(opts);
+      s.addEventListener('reading', ()=>{ genericEvents++; lastRealEventAt=Date.now(); genericState.gyro={x:n(s.x),y:n(s.y),z:n(s.z)}; updateGyroUI(); maybeSend(); });
+      s.addEventListener('error', e=>log('Gyroscope error: ' + (e.error && e.error.message || e.message || e.name)));
+      s.start(); log('Generic Gyroscope started.');
+    }
+  } catch(e){ log('Generic Gyroscope unavailable: ' + e.message); }
+}
+function packXYZ(obj){ return obj ? {x: obj.x ?? null, y: obj.y ?? null, z: obj.z ?? null} : null; }
+function packRot(obj){ return obj ? {alpha: obj.alpha ?? null, beta: obj.beta ?? null, gamma: obj.gamma ?? null} : null; }
+function updateLinearAndAccelUI(){
+  const classic = lastMotion && lastMotion.accelerationIncludingGravity;
+  const accel = classic || genericState.accel || {};
+  const lin = (lastMotion && lastMotion.acceleration) || genericState.linear || {};
+  $('ax').textContent = fmt(accel.x); $('ay').textContent = fmt(accel.y); $('az').textContent = fmt(accel.z);
+  $('lx').textContent = fmt(lin.x); $('ly').textContent = fmt(lin.y); $('lz').textContent = fmt(lin.z);
+}
+function updateGyroUI(){
+  const classic = lastMotion && lastMotion.rotationRate;
+  const g = classic || genericState.gyro || {};
+  $('ra').textContent = fmt(g.alpha ?? g.x); $('rb').textContent = fmt(g.beta ?? g.y); $('rg').textContent = fmt(g.gamma ?? g.z);
+}
+function onMotion(e){
+  motionEvents++; lastRealEventAt=Date.now();
+  lastMotion = { acceleration:packXYZ(e.acceleration), accelerationIncludingGravity:packXYZ(e.accelerationIncludingGravity), rotationRate:packRot(e.rotationRate), interval:e.interval ?? null };
+  updateLinearAndAccelUI(); updateGyroUI(); maybeSend();
+}
+function onOrientation(e){
+  orientEvents++; lastRealEventAt=Date.now();
+  lastOrientation = {alpha:e.alpha ?? null, beta:e.beta ?? null, gamma:e.gamma ?? null, absolute:e.absolute ?? null};
+  $('oa').textContent = fmt(lastOrientation.alpha); $('ob').textContent = fmt(lastOrientation.beta); $('og').textContent = fmt(lastOrientation.gamma);
+}
+function mergedMotion(){
+  const rr = (lastMotion && lastMotion.rotationRate) || null;
+  return {
+    acceleration: (lastMotion && lastMotion.acceleration) || genericState.linear,
+    accelerationIncludingGravity: (lastMotion && lastMotion.accelerationIncludingGravity) || genericState.accel,
+    rotationRate: rr || (genericState.gyro ? {alpha:genericState.gyro.x, beta:genericState.gyro.y, gamma:genericState.gyro.z, source:'Generic Gyroscope rad/s'} : null),
+    interval: lastMotion && lastMotion.interval,
+    source: lastMotion ? 'DeviceMotionEvent' : (genericEvents ? 'Generic Sensor API' : 'none')
+  };
+}
+
+function getLinearForGrid(){
+  const dm = mergedMotion();
+  const lin = dm.acceleration || genericState.linear || null;
+  const ag = dm.accelerationIncludingGravity || genericState.accel || {};
+  let ax = Number(lin && lin.x);
+  let ay = Number(lin && lin.y);
+  if(!Number.isFinite(ax)) ax = Number(ag.x || 0) * 0.08;
+  if(!Number.isFinite(ay)) ay = Number(ag.y || 0) * 0.08;
+  return {ax, ay};
+}
+function updateGridPosition(){
+  const t = performance.now();
+  if(!gridPos.lastT) gridPos.lastT = t;
+  const dt = Math.max(0.001, Math.min(0.08, (t - gridPos.lastT) / 1000));
+  gridPos.lastT = t;
+  const {ax, ay} = getLinearForGrid();
+  const sensitivity = 58;
+  gridPos.vx = (gridPos.vx + ax * sensitivity * dt) * 0.94;
+  gridPos.vy = (gridPos.vy - ay * sensitivity * dt) * 0.94;
+  if(Math.abs(ax) < 0.035) gridPos.vx *= 0.88;
+  if(Math.abs(ay) < 0.035) gridPos.vy *= 0.88;
+  gridPos.x += gridPos.vx * dt;
+  gridPos.y += gridPos.vy * dt;
+  $('gridX').textContent = fmt(gridPos.x);
+  $('gridY').textContent = fmt(gridPos.y);
+  $('gridSpeed').textContent = fmt(Math.hypot(gridPos.vx, gridPos.vy));
+  return {...gridPos};
+}
+function resetGridPosition(){
+  gridPos = {x:0, y:0, vx:0, vy:0, lastT:performance.now()};
+  $('gridX').textContent = '0.00'; $('gridY').textContent = '0.00'; $('gridSpeed').textContent = '0.00';
+  log('Local 2D grid position reset.');
+}
+function sample(){ const now = performance.now(); return {t:Date.now(), dt:startTime ? now-startTime : 0, devicemotion:mergedMotion(), deviceorientation:lastOrientation, generic:genericState, grid:updateGridPosition()}; }
+
+async function maybeSend(){
+  if(!recording || !connected) return;
+  const now = performance.now();
+  if(now - lastSend < minIntervalMs) return;
+  lastSend = now;
+  const s = sample();
+  count++; rateSamples++;
+  $('sampleCount').textContent = count;
+  trace.push(s); if(trace.length > 500) trace.shift(); drawTrace();
+  if(now - lastRateTime > 1000){ $('rate').textContent = String(rateSamples); rateSamples = 0; lastRateTime = now; }
+  try { const r = await post('/api/sample', {sample:s}); $('ack').textContent = String(r.seq ?? 'ok'); }
+  catch(err){ log('Sample send failed: ' + err.message); }
+}
+async function startRecording(){
+  if(!connected || !sensorsReady) return;
+  try {
+    const r = await post('/api/start', {name:$('recordingName').value || 'movement'});
+    recording = !!r.recordingActive; count = 0; trace.length = 0; startTime = performance.now(); lastSend = 0; resetGridPosition();
+    $('sampleCount').textContent = '0'; log('Recording started: ' + JSON.stringify(r)); updateButtons();
+  } catch(err){ log('Start failed: ' + err.message); }
+}
+async function stopRecording(){
+  try { const r = await post('/api/stop', {}); log('Stopped/saved: ' + JSON.stringify(r)); $('ack').textContent = 'saved'; }
+  catch(err){ log('Stop failed: ' + err.message); }
+  recording = false; updateButtons();
+}
+async function addMarker(){ try { const r = await post('/api/marker', {label:'marker'}); log('Marker added: seq ' + r.seq); } catch(err){ log('Marker failed: ' + err.message); } }
+function drawTrace(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.strokeStyle='#ddd'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(0,canvas.height/2); ctx.lineTo(canvas.width,canvas.height/2); ctx.stroke();
+  ['x','y','z'].forEach((k,idx)=>{ ctx.beginPath(); ctx.lineWidth=2; trace.forEach((s,i)=>{ const ag=(s.devicemotion&&s.devicemotion.accelerationIncludingGravity)||{}; const val=Number(ag[k]||0); const x=(i/Math.max(1,trace.length-1))*canvas.width; const y=canvas.height/2-val*12+(idx-1)*45; if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y); }); ctx.stroke(); });
+}
+function allLiveZero(){
+  return ['ax','ay','az','lx','ly','lz','ra','rb','rg','oa','ob','og'].every(id => Math.abs(Number($(id).textContent)||0) < 0.0001);
+}
+async function runDiagnostic(){
+  showCaps();
+  log('Diagnostic: userAgent=' + navigator.userAgent);
+  log('Diagnostic: secureContext=' + window.isSecureContext + ', protocol=' + location.protocol + ', hostname=' + location.hostname);
+  log('Diagnostic: supported classic events: DeviceMotionEvent=' + ('DeviceMotionEvent' in window) + ', DeviceOrientationEvent=' + ('DeviceOrientationEvent' in window));
+  log('Diagnostic: supported Generic Sensor classes: Accelerometer=' + ('Accelerometer' in window) + ', LinearAccelerationSensor=' + ('LinearAccelerationSensor' in window) + ', Gyroscope=' + ('Gyroscope' in window));
+  log('Diagnostic: tap Enable sensors, then physically rotate/shake phone. Counts should increase within 5 seconds.');
+}
+function sendDemoMotion(){
+  if(!connected) { log('Demo needs connection first.'); return; }
+  if(demoTimer) { clearInterval(demoTimer); demoTimer=null; log('Demo motion stopped.'); return; }
+  let i=0;
+  demoTimer = setInterval(async()=>{
+    i++;
+    const s={t:Date.now(), dt:i*50, devicemotion:{acceleration:{x:Math.sin(i/6)*2,y:Math.cos(i/8)*2,z:0},accelerationIncludingGravity:{x:Math.sin(i/6)*4,y:Math.cos(i/8)*4,z:9.8+Math.sin(i/3)},rotationRate:{alpha:Math.sin(i/9)*40,beta:Math.cos(i/7)*40,gamma:Math.sin(i/5)*40},source:'demo'},deviceorientation:{alpha:(i*3)%360,beta:Math.sin(i/12)*45,gamma:Math.cos(i/10)*45,absolute:false}};
+    try { await post('/api/sample', {sample:s}); $('ack').textContent='demo'; } catch(e) { log('Demo send failed: '+e.message); }
+    if(i>240){ clearInterval(demoTimer); demoTimer=null; log('Demo motion finished.'); }
+  }, 50);
+  log('Demo motion sending. If dashboard moves, connection/dashboard are good and only real phone sensor access is blocked. Tap again to stop.');
+}
+$('connectBtn').onclick = connect;
+$('testBtn').onclick = testServer;
+$('permBtn').onclick = enableSensors;
+$('diagBtn').onclick = runDiagnostic;
+$('demoBtn').onclick = sendDemoMotion;
+$('startBtn').onclick = startRecording;
+$('stopBtn').onclick = stopRecording;
+$('markBtn').onclick = addMarker;
+$('resetGridBtn').onclick = resetGridPosition;
+</script>
+</body>
+</html>
